@@ -3,7 +3,10 @@
     public enum SyntaxType
     {
         NotFound,
-        MethodSyntax,
+        Class,
+        Constructor,
+        Method,
+
 
     }
 }

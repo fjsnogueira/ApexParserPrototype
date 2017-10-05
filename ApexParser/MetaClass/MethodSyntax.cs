@@ -3,7 +3,7 @@ using ApexParser.Lexer;
 
 namespace ApexParser.MetaClass
 {
-    public class MethodSyntax : SyntaxBase
+    public class MethodSyntax : BaseSyntax
     {
         public List<string> Attributes = new List<string>();
         public List<string> Modifiers = new List<string>();
@@ -12,11 +12,11 @@ namespace ApexParser.MetaClass
 
         public List<ParameterSyntax> MethodParameters = new List<ParameterSyntax>();
 
-        public List<Token> TokenList = new List<Token>();
+        public string CodeInsideMethod { get; set; }
 
         public MethodSyntax()
         {
-            Kind = SyntaxType.MethodSyntax;
+            Kind = SyntaxType.Method;
         }
 
 

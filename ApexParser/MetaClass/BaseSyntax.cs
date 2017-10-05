@@ -3,9 +3,9 @@
 
 namespace ApexParser.MetaClass
 {
-    public class SyntaxBase
+    public class BaseSyntax
     {
-        public List<SyntaxBase> ChildNodes = new List<SyntaxBase>();
+        public List<BaseSyntax> ChildNodes = new List<BaseSyntax>();
         public List<string> CodeComments = new List<string>();
 
         public SyntaxType Kind { get; set; }

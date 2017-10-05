@@ -57,9 +57,11 @@
     <Compile Include="Lexer\ApexTokenRegEx.cs" />
     <Compile Include="Lexer\TokenType.cs" />
     <Compile Include="Lexer\TokenDefinition.cs" />
+    <Compile Include="MetaClass\BaseSyntax.cs" />
+    <Compile Include="MetaClass\ClassSyntax.cs" />
+    <Compile Include="MetaClass\ConstructorSyntax.cs" />
     <Compile Include="MetaClass\ParameterSyntax.cs" />
     <Compile Include="MetaClass\MethodSyntax.cs" />
-    <Compile Include="MetaClass\SyntaxBase.cs" />
     <Compile Include="MetaClass\SyntaxType.cs" />
     <Compile Include="ParserAst\ClassDeclaration.cs" />
     <Compile Include="ParserAst\MethodDeclaration.cs" />
