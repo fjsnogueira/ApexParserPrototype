@@ -9,6 +9,8 @@ namespace ApexParser.ParserAst
 {
     public class MethodDeclaration
     {
+        public string Visibility { get; set; }
+
         public string ReturnType { get; set; }
 
         public string MethodName { get; set; }

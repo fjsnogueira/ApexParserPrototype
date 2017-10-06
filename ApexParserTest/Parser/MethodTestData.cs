@@ -5,19 +5,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ApexParser.Parser;
+using NUnit.Framework;
 using Sprache;
-using Xunit;
 
 namespace ApexParserTest.Parser
 {
+    [TestFixture]
     public class MethodTestData
     {
         private ApexGrammar Apex { get; } = new ApexGrammar();
 
-        [Fact]
+        [Test, Ignore("TODO: add public static")]
         public void MethodSigTestOne()
         {
-            var methodSig = "public static void GetNumber(string name) { // Comment }";
+            var methodSig = "public static void GetNumber(string name) { /* Comment */ }";
 
             MethodSyntax methodSyntax = new MethodSyntax();
             methodSyntax.Modifiers.Add("public");
@@ -25,11 +26,11 @@ namespace ApexParserTest.Parser
             methodSyntax.ReturnType = "void";
             methodSyntax.Identifier = "GetNumber";
             methodSyntax.MethodParameters.Add(new ParameterSyntax("string", "name"));
-            methodSyntax.CodeInsideMethod = "{ // Comment }";
+            methodSyntax.CodeInsideMethod = "{ /* Comment */ }";
 
             var method = Apex.MethodDeclaration.Parse(methodSig);
 
-            Assert.Equal("void", method.ReturnType);
+            Assert.AreEqual("void", method.ReturnType);
         }
     }
 }

@@ -1,0 +1,8 @@
+﻿version: 1.0.{build}
+image: Visual Studio 2017
+init:
+- cmd: git config --global core.autocrlf false
+before_build:
+- cmd: nuget restore
+build:
+  verbosity: minimal
