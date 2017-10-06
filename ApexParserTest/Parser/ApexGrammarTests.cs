@@ -4,54 +4,55 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ApexParser.Parser;
+using NUnit.Framework;
 using Sprache;
-using Xunit;
 
 namespace ApexParserTest.Parser
 {
+    [TestFixture]
     public class ApexGrammarTests
     {
         private ApexGrammar Apex { get; } = new ApexGrammar();
 
-        [Fact]
+        [Test]
         public void IdentifierIsALetterFollowedByALetterOrDigit()
         {
             // every test case should include positive examples
-            Assert.Equal("abc", Apex.Identifier.Parse(" abc "));
-            Assert.Equal("Test123", Apex.Identifier.Parse("Test123"));
+            Assert.AreEqual("abc", Apex.Identifier.Parse(" abc "));
+            Assert.AreEqual("Test123", Apex.Identifier.Parse("Test123"));
 
             // and negative ones
             Assert.Throws<ParseException>(() => Apex.Identifier.Parse("1"));
         }
 
-        [Fact]
+        [Test]
         public void ParameterDeclarationIsTypeAndNamePair()
         {
             var pd = Apex.ParameterDeclaration.Parse(" int a");
-            Assert.Equal("int", pd.ParameterType);
-            Assert.Equal("a", pd.ParameterName);
+            Assert.AreEqual("int", pd.ParameterType);
+            Assert.AreEqual("a", pd.ParameterName);
 
             Assert.Throws<ParseException>(() => Apex.ParameterDeclaration.Parse("Hello!"));
         }
 
-        [Fact]
+        [Test]
         public void ParameterDeclarationsIsACommaSeparaterListOfParameterDeclarations()
         {
             var pds = Apex.ParameterDeclarations.Parse(" int a, String b");
-            Assert.Equal(2, pds.Count);
+            Assert.AreEqual(2, pds.Count);
 
             var pd = pds[0];
-            Assert.Equal("int", pd.ParameterType);
-            Assert.Equal("a", pd.ParameterName);
+            Assert.AreEqual("int", pd.ParameterType);
+            Assert.AreEqual("a", pd.ParameterName);
 
             pd = pds[1];
-            Assert.Equal("String", pd.ParameterType);
-            Assert.Equal("b", pd.ParameterName);
+            Assert.AreEqual("String", pd.ParameterType);
+            Assert.AreEqual("b", pd.ParameterName);
 
             Assert.Throws<ParseException>(() => Apex.ParameterDeclaration.Parse("Hello!"));
         }
 
-        [Fact]
+        [Test]
         public void MethodParametersCanBeJustEmptyBraces()
         {
             var mp = Apex.MethodParameters.Parse(" () ");
@@ -64,24 +65,24 @@ namespace ApexParserTest.Parser
             Assert.Throws<ParseException>(() => Apex.MethodParameters.Parse("Hello"));
         }
 
-        [Fact]
+        [Test]
         public void MethodParametersIsCommaSeparatedParameterDeclarationsWithinBraces()
         {
             var mp = Apex.MethodParameters.Parse(" (Integer a, char b,  Boolean c123 ) ");
             Assert.NotNull(mp.Parameters);
-            Assert.Equal(3, mp.Parameters.Count);
+            Assert.AreEqual(3, mp.Parameters.Count);
 
             var pd = mp.Parameters[0];
-            Assert.Equal("Integer", pd.ParameterType);
-            Assert.Equal("a", pd.ParameterName);
+            Assert.AreEqual("Integer", pd.ParameterType);
+            Assert.AreEqual("a", pd.ParameterName);
 
             pd = mp.Parameters[1];
-            Assert.Equal("char", pd.ParameterType);
-            Assert.Equal("b", pd.ParameterName);
+            Assert.AreEqual("char", pd.ParameterType);
+            Assert.AreEqual("b", pd.ParameterName);
 
             pd = mp.Parameters[2];
-            Assert.Equal("Boolean", pd.ParameterType);
-            Assert.Equal("c123", pd.ParameterName);
+            Assert.AreEqual("Boolean", pd.ParameterType);
+            Assert.AreEqual("c123", pd.ParameterName);
 
             // bad input examples
             Assert.Throws<ParseException>(() => Apex.MethodParameters.Parse(" (Integer a, char b,  Boolean ) "));
@@ -89,13 +90,13 @@ namespace ApexParserTest.Parser
             Assert.Throws<ParseException>(() => Apex.MethodParameters.Parse("int a"));
         }
 
-        [Fact]
+        [Test]
         public void MethodDeclarationIsAMethodSignatureWithABlock()
         {
             // parameterless method
             var md = Apex.MethodDeclaration.Parse("void Test() {}");
-            Assert.Equal("void", md.ReturnType);
-            Assert.Equal("Test", md.MethodName);
+            Assert.AreEqual("void", md.ReturnType);
+            Assert.AreEqual("Test", md.MethodName);
             Assert.True(md.Parameters.IsEmpty);
 
             // method with parameters
@@ -104,20 +105,20 @@ namespace ApexParserTest.Parser
             {
             } ");
 
-            Assert.Equal("string", md.ReturnType);
-            Assert.Equal("Hello", md.MethodName);
+            Assert.AreEqual("string", md.ReturnType);
+            Assert.AreEqual("Hello", md.MethodName);
             Assert.False(md.Parameters.IsEmpty);
 
             var mp = md.Parameters;
-            Assert.Equal(2, mp.Parameters.Count);
+            Assert.AreEqual(2, mp.Parameters.Count);
 
             var pd = mp.Parameters[0];
-            Assert.Equal("String", pd.ParameterType);
-            Assert.Equal("name", pd.ParameterName);
+            Assert.AreEqual("String", pd.ParameterType);
+            Assert.AreEqual("name", pd.ParameterName);
 
             pd = mp.Parameters[1];
-            Assert.Equal("Boolean", pd.ParameterType);
-            Assert.Equal("newLine", pd.ParameterName);
+            Assert.AreEqual("Boolean", pd.ParameterType);
+            Assert.AreEqual("newLine", pd.ParameterName);
 
             // invalid input
             Assert.Throws<ParseException>(() => Apex.MethodDeclaration.Parse("void Test {}"));
@@ -125,28 +126,28 @@ namespace ApexParserTest.Parser
             Assert.Throws<ParseException>(() => Apex.MethodDeclaration.Parse("void() {}"));
         }
 
-        [Fact]
+        [Test]
         public void ClassDeclarationCanBeEmpty()
         {
             var cd = Apex.ClassDeclaration.Parse(" class Test {}");
             Assert.False(cd.Methods.Any());
-            Assert.Equal("Test", cd.ClassName);
+            Assert.AreEqual("Test", cd.ClassName);
 
             // incomplete class declarations
             Assert.Throws<ParseException>(() => Apex.ClassDeclaration.Parse(" class Test {"));
             Assert.Throws<ParseException>(() => Apex.ClassDeclaration.Parse("class {}"));
         }
 
-        [Fact]
+        [Test]
         public void ClassDeclarationCanDeclareMethods()
         {
             var cd = Apex.ClassDeclaration.Parse(" class Program { void main() {} }");
             Assert.True(cd.Methods.Any());
-            Assert.Equal("Program", cd.ClassName);
+            Assert.AreEqual("Program", cd.ClassName);
 
             var md = cd.Methods.Single();
-            Assert.Equal("void", md.ReturnType);
-            Assert.Equal("main", md.MethodName);
+            Assert.AreEqual("void", md.ReturnType);
+            Assert.AreEqual("main", md.MethodName);
             Assert.True(md.Parameters.IsEmpty);
 
             // class declarations with bad methods

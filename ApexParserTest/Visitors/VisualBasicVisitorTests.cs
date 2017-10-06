@@ -5,34 +5,35 @@ using System.Text;
 using System.Threading.Tasks;
 using ApexParser.Parser;
 using ApexParser.Visitors;
+using NUnit.Framework;
 using Sprache;
-using Xunit;
 
 namespace ApexParserTest.Visitors
 {
+    [TestFixture]
     public class VisualBasicVisitorTests
     {
         private ApexGrammar Apex { get; } = new ApexGrammar();
 
-        [Fact]
+        [Test]
         public void EmptyClassDeclarationIsFormatted()
         {
             var cd = Apex.ClassDeclaration.Parse("class Test {}");
             var result = VisualBasicCodeGenerator.Generate(cd);
 
-            Assert.Equal(
+            Assert.AreEqual(
 @"Class Test
 End Class
 ", result);
         }
 
-        [Fact]
+        [Test]
         public void NonEmptyClassDeclarationIsFormatted()
         {
             var cd = Apex.ClassDeclaration.Parse("class Program{void Main(string arg){}}");
             var result = VisualBasicCodeGenerator.Generate(cd);
 
-            Assert.Equal(
+            Assert.AreEqual(
 @"Class Program
     Sub Main(arg As string)
     End Sub
