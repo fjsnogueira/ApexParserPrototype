@@ -15,7 +15,7 @@ namespace ApexParserTest.Parser
     {
         private ApexGrammar Apex { get; } = new ApexGrammar();
 
-        [Test, Ignore("TODO")]
+        [Test, Ignore("TODO: add public static")]
         public void MethodSigTestOne()
         {
             var methodSig = "public static void GetNumber(string name) { /* Comment */ }";

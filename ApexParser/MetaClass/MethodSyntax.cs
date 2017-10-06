@@ -18,7 +18,5 @@ namespace ApexParser.MetaClass
         {
             Kind = SyntaxType.Method;
         }
-
-
     }
 }
