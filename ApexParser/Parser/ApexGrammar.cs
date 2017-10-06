@@ -10,20 +10,25 @@ namespace ApexParser.Parser
 {
     public class ApexGrammar
     {
-        // TODO: import Apex keywords
-        protected internal HashSet<string> Keywords { get; } = new HashSet<string>
-        {
-            "class", "public", "private", "static"
-        };
-
         // examples: a, Apex, code123
         protected internal virtual Parser<string> Identifier =>
         (
             from identifier in Parse.Identifier(Parse.Letter, Parse.LetterOrDigit)
-            where !Keywords.Contains(identifier)
+            where !ApexKeywords.All.Contains(identifier)
             select identifier
         )
         .Token().Named("Identifier");
+
+        // examples: /* default settings are OK */ //
+        protected internal virtual CommentParser CommentParser { get; } = new CommentParser();
+
+        // examples: int, void
+        protected internal virtual Parser<string> PrimitiveType =>
+            Parse.String(ApexKeywords.Int).Or(
+            Parse.String(ApexKeywords.Boolean)).Or(
+            Parse.String(ApexKeywords.Char)).Or(
+            Parse.String(ApexKeywords.Void))
+                .Token().Text().Named("PrimitiveType");
 
         // example: string name
         protected internal virtual Parser<ParameterSyntax> ParameterDeclaration =>
@@ -44,11 +49,22 @@ namespace ApexParser.Parser
             from closeBrace in Parse.Char(')').Token()
             select param.GetOrElse(new List<ParameterSyntax>());
 
-        // examples: public, private
+        // examples: public, private, with sharing
         protected internal virtual Parser<string> Modifier =>
-            Parse.String("public").Or(
-            Parse.String("private")).Or(
-            Parse.String("static"))
+            Parse.String(ApexKeywords.Public).Or(
+            Parse.String(ApexKeywords.Protected)).Or(
+            Parse.String(ApexKeywords.Private)).Or(
+            Parse.String(ApexKeywords.Static)).Or(
+            Parse.String(ApexKeywords.Abstract)).Or(
+            Parse.String(ApexKeywords.Final)).Or(
+            Parse.String(ApexKeywords.Global)).Or(
+            Parse.String(ApexKeywords.WebService)).Or(
+            Parse.String(ApexKeywords.Override)).Or(
+            Parse.String(ApexKeywords.Virtual)).Or(
+            Parse.String(ApexKeywords.TestMethod)).Or(
+            Parse.String(ApexKeywords.With).Token().Then(_ => Parse.String(ApexKeywords.Sharing)).Return("with_sharing")).Or(
+            Parse.String(ApexKeywords.Without).Token().Then(_ => Parse.String(ApexKeywords.Sharing)).Return("without_sharing")).Or(
+            Parse.String("todo?"))
                 .Text().Token().Named("Modifier");
 
         // examples:
@@ -72,7 +88,7 @@ namespace ApexParser.Parser
         // example: class Program { void main() {} }
         protected internal virtual Parser<ClassSyntax> ClassDeclaration =>
             from modifiers in Modifier.Many()
-            from @class in Parse.String("class").Token()
+            from @class in Parse.String(ApexKeywords.Class).Token()
             from className in Identifier
             from openBrace in Parse.Char('{').Token()
             from methods in MethodDeclaration.Many()

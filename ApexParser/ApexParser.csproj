@@ -64,6 +64,7 @@
     <Compile Include="MetaClass\MethodSyntax.cs" />
     <Compile Include="MetaClass\SyntaxType.cs" />
     <Compile Include="Parser\ApexGrammar.cs" />
+    <Compile Include="Parser\ApexKeywords.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
