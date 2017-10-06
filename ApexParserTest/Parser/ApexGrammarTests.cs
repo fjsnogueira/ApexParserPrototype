@@ -38,8 +38,8 @@ namespace ApexParserTest.Parser
         public void ParameterDeclarationIsTypeAndNamePair()
         {
             var pd = Apex.ParameterDeclaration.Parse(" int a");
-            Assert.AreEqual("int", pd.ParameterType);
-            Assert.AreEqual("a", pd.ParameterName);
+            Assert.AreEqual("int", pd.Type);
+            Assert.AreEqual("a", pd.Identifier);
 
             Assert.Throws<ParseException>(() => Apex.ParameterDeclaration.Parse("Hello!"));
         }
@@ -51,12 +51,12 @@ namespace ApexParserTest.Parser
             Assert.AreEqual(2, pds.Count);
 
             var pd = pds[0];
-            Assert.AreEqual("int", pd.ParameterType);
-            Assert.AreEqual("a", pd.ParameterName);
+            Assert.AreEqual("int", pd.Type);
+            Assert.AreEqual("a", pd.Identifier);
 
             pd = pds[1];
-            Assert.AreEqual("String", pd.ParameterType);
-            Assert.AreEqual("b", pd.ParameterName);
+            Assert.AreEqual("String", pd.Type);
+            Assert.AreEqual("b", pd.Identifier);
 
             Assert.Throws<ParseException>(() => Apex.ParameterDeclaration.Parse("Hello!"));
         }
@@ -65,8 +65,8 @@ namespace ApexParserTest.Parser
         public void MethodParametersCanBeJustEmptyBraces()
         {
             var mp = Apex.MethodParameters.Parse(" () ");
-            Assert.NotNull(mp.Parameters);
-            Assert.False(mp.Parameters.Any());
+            Assert.NotNull(mp);
+            Assert.False(mp.Any());
 
             // unmatched braces, bad input, etc
             Assert.Throws<ParseException>(() => Apex.MethodParameters.Parse("("));
@@ -78,20 +78,20 @@ namespace ApexParserTest.Parser
         public void MethodParametersIsCommaSeparatedParameterDeclarationsWithinBraces()
         {
             var mp = Apex.MethodParameters.Parse(" (Integer a, char b,  Boolean c123 ) ");
-            Assert.NotNull(mp.Parameters);
-            Assert.AreEqual(3, mp.Parameters.Count);
+            Assert.NotNull(mp);
+            Assert.AreEqual(3, mp.Count);
 
-            var pd = mp.Parameters[0];
-            Assert.AreEqual("Integer", pd.ParameterType);
-            Assert.AreEqual("a", pd.ParameterName);
+            var pd = mp[0];
+            Assert.AreEqual("Integer", pd.Type);
+            Assert.AreEqual("a", pd.Identifier);
 
-            pd = mp.Parameters[1];
-            Assert.AreEqual("char", pd.ParameterType);
-            Assert.AreEqual("b", pd.ParameterName);
+            pd = mp[1];
+            Assert.AreEqual("char", pd.Type);
+            Assert.AreEqual("b", pd.Identifier);
 
-            pd = mp.Parameters[2];
-            Assert.AreEqual("Boolean", pd.ParameterType);
-            Assert.AreEqual("c123", pd.ParameterName);
+            pd = mp[2];
+            Assert.AreEqual("Boolean", pd.Type);
+            Assert.AreEqual("c123", pd.Identifier);
 
             // bad input examples
             Assert.Throws<ParseException>(() => Apex.MethodParameters.Parse(" (Integer a, char b,  Boolean ) "));
@@ -102,11 +102,11 @@ namespace ApexParserTest.Parser
         [Test]
         public void MemberVisibilityCanBePublicOrPrivate()
         {
-            Assert.AreEqual("public", Apex.MemberVisibility.Parse(" \n public "));
-            Assert.AreEqual("private", Apex.MemberVisibility.Parse(" private \t"));
+            Assert.AreEqual("public", Apex.Modifier.Parse(" \n public "));
+            Assert.AreEqual("private", Apex.Modifier.Parse(" private \t"));
 
             // bad input
-            Assert.Throws<ParseException>(() => Apex.MemberVisibility.Parse(" whatever "));
+            Assert.Throws<ParseException>(() => Apex.Modifier.Parse(" whatever "));
         }
 
         [Test]
@@ -114,10 +114,10 @@ namespace ApexParserTest.Parser
         {
             // parameterless method
             var md = Apex.MethodDeclaration.Parse("void Test() {}");
-            Assert.AreEqual("private", md.Visibility);
+            Assert.False(md.Modifiers.Any());
+            Assert.False(md.MethodParameters.Any());
             Assert.AreEqual("void", md.ReturnType);
-            Assert.AreEqual("Test", md.MethodName);
-            Assert.True(md.Parameters.IsEmpty);
+            Assert.AreEqual("Test", md.Identifier);
 
             // method with parameters
             md = Apex.MethodDeclaration.Parse(@"
@@ -125,21 +125,21 @@ namespace ApexParserTest.Parser
             {
             } ");
 
-            Assert.AreEqual("private", md.Visibility);
+            Assert.False(md.Modifiers.Any());
+            Assert.AreEqual(2, md.MethodParameters.Count);
             Assert.AreEqual("string", md.ReturnType);
-            Assert.AreEqual("Hello", md.MethodName);
-            Assert.False(md.Parameters.IsEmpty);
+            Assert.AreEqual("Hello", md.Identifier);
 
-            var mp = md.Parameters;
-            Assert.AreEqual(2, mp.Parameters.Count);
+            var mp = md.MethodParameters;
+            Assert.AreEqual(2, mp.Count);
 
-            var pd = mp.Parameters[0];
-            Assert.AreEqual("String", pd.ParameterType);
-            Assert.AreEqual("name", pd.ParameterName);
+            var pd = mp[0];
+            Assert.AreEqual("String", pd.Type);
+            Assert.AreEqual("name", pd.Identifier);
 
-            pd = mp.Parameters[1];
-            Assert.AreEqual("Boolean", pd.ParameterType);
-            Assert.AreEqual("newLine", pd.ParameterName);
+            pd = mp[1];
+            Assert.AreEqual("Boolean", pd.Type);
+            Assert.AreEqual("newLine", pd.Identifier);
 
             // method with visibility
             md = Apex.MethodDeclaration.Parse(@"
@@ -147,17 +147,18 @@ namespace ApexParserTest.Parser
             {
             } ");
 
-            Assert.AreEqual("public", md.Visibility);
+            Assert.AreEqual(1, md.Modifiers.Count);
+            Assert.AreEqual("public", md.Modifiers[0]);
             Assert.AreEqual("int", md.ReturnType);
-            Assert.AreEqual("Add", md.MethodName);
-            Assert.False(md.Parameters.IsEmpty);
+            Assert.AreEqual("Add", md.Identifier);
+            Assert.AreEqual(3, md.MethodParameters.Count);
 
-            mp = md.Parameters;
-            Assert.AreEqual(3, mp.Parameters.Count);
+            mp = md.MethodParameters;
+            Assert.AreEqual(3, mp.Count);
 
-            pd = mp.Parameters[0];
-            Assert.AreEqual("int", pd.ParameterType);
-            Assert.AreEqual("x", pd.ParameterName);
+            pd = mp[0];
+            Assert.AreEqual("int", pd.Type);
+            Assert.AreEqual("x", pd.Identifier);
 
             // invalid input
             Assert.Throws<ParseException>(() => Apex.MethodDeclaration.Parse("void Test {}"));
@@ -170,7 +171,8 @@ namespace ApexParserTest.Parser
         {
             var cd = Apex.ClassDeclaration.Parse(" class Test {}");
             Assert.False(cd.Methods.Any());
-            Assert.AreEqual("Test", cd.ClassName);
+            Assert.False(cd.Modifiers.Any());
+            Assert.AreEqual("Test", cd.Identifier);
 
             // incomplete class declarations
             Assert.Throws<ParseException>(() => Apex.ClassDeclaration.Parse(" class Test {"));
@@ -182,12 +184,12 @@ namespace ApexParserTest.Parser
         {
             var cd = Apex.ClassDeclaration.Parse(" class Program { void main() {} }");
             Assert.True(cd.Methods.Any());
-            Assert.AreEqual("Program", cd.ClassName);
+            Assert.AreEqual("Program", cd.Identifier);
 
             var md = cd.Methods.Single();
             Assert.AreEqual("void", md.ReturnType);
-            Assert.AreEqual("main", md.MethodName);
-            Assert.True(md.Parameters.IsEmpty);
+            Assert.AreEqual("main", md.Identifier);
+            Assert.False(md.MethodParameters.Any());
 
             // class declarations with bad methods
             Assert.Throws<ParseException>(() => Apex.ClassDeclaration.Parse(" class Test { void Main }"));

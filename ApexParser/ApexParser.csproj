@@ -63,16 +63,9 @@
     <Compile Include="MetaClass\ParameterSyntax.cs" />
     <Compile Include="MetaClass\MethodSyntax.cs" />
     <Compile Include="MetaClass\SyntaxType.cs" />
-    <Compile Include="ParserAst\ClassDeclaration.cs" />
-    <Compile Include="ParserAst\MethodDeclaration.cs" />
-    <Compile Include="ParserAst\MethodParameters.cs" />
-    <Compile Include="ParserAst\ParameterDeclaration.cs" />
     <Compile Include="Parser\ApexGrammar.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Visitors\ApexCodeGenerator.cs" />
-    <Compile Include="Visitors\BaseVisitor.cs" />
-    <Compile Include="Visitors\VisualBasicCodeGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -82,6 +75,7 @@
     <Content Include="ApexCode\MethodsOne.txt" />
     <Content Include="ApexCode\MethodsTwo.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
