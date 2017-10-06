@@ -26,6 +26,15 @@ namespace ApexParserTest.Parser
         }
 
         [Test]
+        public void AKeywordIsNotAnIdentifier()
+        {
+            Assert.Throws<ParseException>(() => Apex.Identifier.Parse("class"));
+            Assert.Throws<ParseException>(() => Apex.Identifier.Parse("public"));
+            Assert.Throws<ParseException>(() => Apex.Identifier.Parse("private"));
+            Assert.Throws<ParseException>(() => Apex.Identifier.Parse("static"));
+        }
+
+        [Test]
         public void ParameterDeclarationIsTypeAndNamePair()
         {
             var pd = Apex.ParameterDeclaration.Parse(" int a");
@@ -91,10 +100,21 @@ namespace ApexParserTest.Parser
         }
 
         [Test]
+        public void MemberVisibilityCanBePublicOrPrivate()
+        {
+            Assert.AreEqual("public", Apex.MemberVisibility.Parse(" \n public "));
+            Assert.AreEqual("private", Apex.MemberVisibility.Parse(" private \t"));
+
+            // bad input
+            Assert.Throws<ParseException>(() => Apex.MemberVisibility.Parse(" whatever "));
+        }
+
+        [Test]
         public void MethodDeclarationIsAMethodSignatureWithABlock()
         {
             // parameterless method
             var md = Apex.MethodDeclaration.Parse("void Test() {}");
+            Assert.AreEqual("private", md.Visibility);
             Assert.AreEqual("void", md.ReturnType);
             Assert.AreEqual("Test", md.MethodName);
             Assert.True(md.Parameters.IsEmpty);
@@ -105,6 +125,7 @@ namespace ApexParserTest.Parser
             {
             } ");
 
+            Assert.AreEqual("private", md.Visibility);
             Assert.AreEqual("string", md.ReturnType);
             Assert.AreEqual("Hello", md.MethodName);
             Assert.False(md.Parameters.IsEmpty);
@@ -119,6 +140,24 @@ namespace ApexParserTest.Parser
             pd = mp.Parameters[1];
             Assert.AreEqual("Boolean", pd.ParameterType);
             Assert.AreEqual("newLine", pd.ParameterName);
+
+            // method with visibility
+            md = Apex.MethodDeclaration.Parse(@"
+            public int Add(int x, int y, int z)
+            {
+            } ");
+
+            Assert.AreEqual("public", md.Visibility);
+            Assert.AreEqual("int", md.ReturnType);
+            Assert.AreEqual("Add", md.MethodName);
+            Assert.False(md.Parameters.IsEmpty);
+
+            mp = md.Parameters;
+            Assert.AreEqual(3, mp.Parameters.Count);
+
+            pd = mp.Parameters[0];
+            Assert.AreEqual("int", pd.ParameterType);
+            Assert.AreEqual("x", pd.ParameterName);
 
             // invalid input
             Assert.Throws<ParseException>(() => Apex.MethodDeclaration.Parse("void Test {}"));

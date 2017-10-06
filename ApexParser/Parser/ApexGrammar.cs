@@ -10,10 +10,23 @@ namespace ApexParser.Parser
 {
     public class ApexGrammar
     {
+        // TODO: import Apex keywords
+        protected internal HashSet<string> Keywords { get; } = new HashSet<string>
+        {
+            "class", "public", "private", "static"
+        };
+
         // examples: a, Apex, code123
         protected internal virtual Parser<string> Identifier =>
-            Parse.Letter.AtLeastOnce().Text().Then(h =>
-            Parse.LetterOrDigit.Many().Text().Select(t => h + t)).Token();
+        (
+            from first in Parse.Letter.Once()
+            from rest in Parse.LetterOrDigit.Many()
+            select string.Join(string.Empty, first.Concat(rest))
+            into identifier
+            where !Keywords.Contains(identifier)
+            select identifier
+        )
+        .Token().Named("Identifier");
 
         // example: string name
         protected internal virtual Parser<ParameterDeclaration> ParameterDeclaration =>
@@ -41,8 +54,16 @@ namespace ApexParser.Parser
                 Parameters = param.GetOrElse(Enumerable.Empty<ParameterDeclaration>()).ToList()
             };
 
-        // example: void Test() {}
+        // examples: public, private
+        protected internal virtual Parser<string> MemberVisibility =>
+            Parse.String("public").Or(Parse.String("private"))
+                .Text().Token().Named("MemberVisibility");
+
+        // examples:
+        // void Test() {}
+        // public static void Hello() {}
         protected internal virtual Parser<MethodDeclaration> MethodDeclaration =>
+            from visibility in MemberVisibility.Optional()
             from returnType in Identifier
             from methodName in Identifier
             from parameters in MethodParameters
@@ -50,6 +71,7 @@ namespace ApexParser.Parser
             from closeBrace in Parse.Char('}').Token()
             select new MethodDeclaration
             {
+                Visibility = visibility.GetOrElse("private"),
                 ReturnType = returnType,
                 MethodName = methodName,
                 Parameters = parameters
