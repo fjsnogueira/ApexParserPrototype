@@ -32,7 +32,7 @@ namespace ApexParser.Parser
 
         // example: string name
         protected internal virtual Parser<ParameterSyntax> ParameterDeclaration =>
-            from type in Identifier
+            from type in PrimitiveType.Or(Identifier)
             from name in Identifier
             select new ParameterSyntax(type, name);
 
@@ -72,7 +72,7 @@ namespace ApexParser.Parser
         // public static void Hello() {}
         protected internal virtual Parser<MethodSyntax> MethodDeclaration =>
             from modifiers in Modifier.Many()
-            from returnType in Identifier
+            from returnType in PrimitiveType.Or(Identifier)
             from methodName in Identifier
             from parameters in MethodParameters
             from openBrace in Parse.Char('{').Token()

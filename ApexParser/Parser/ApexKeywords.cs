@@ -8,11 +8,11 @@ namespace ApexParser.Parser
 {
     public static class ApexKeywords
     {
-        // TODO: auto-populate this set
-        public static HashSet<string> All = new HashSet<string>
-        {
-            Abstract, Class, Public, Private, Sharing, Static, With, Without
-        };
+        public static HashSet<string> All { get; } =
+            new HashSet<string>(AllStringConstants);
+
+        private static IEnumerable<string> AllStringConstants =>
+            typeof(ApexKeywords).GetFields().Select(f => f.GetValue(null)).OfType<string>();
 
         public const string Abstract = "abstract";
         public const string Boolean = "boolean";
