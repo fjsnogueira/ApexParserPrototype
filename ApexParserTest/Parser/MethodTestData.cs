@@ -15,7 +15,7 @@ namespace ApexParserTest.Parser
     {
         private ApexGrammar Apex { get; } = new ApexGrammar();
 
-        [Test, Ignore("TODO: add public static")]
+        [Test]
         public void MethodSigTestOne()
         {
             var methodSig = "public static void GetNumber(string name) { /* Comment */ }";
@@ -26,11 +26,20 @@ namespace ApexParserTest.Parser
             methodSyntax.ReturnType = "void";
             methodSyntax.Identifier = "GetNumber";
             methodSyntax.MethodParameters.Add(new ParameterSyntax("string", "name"));
-            methodSyntax.CodeInsideMethod = "{ /* Comment */ }";
+            methodSyntax.CodeInsideMethod = "/* Comment */";
 
             var method = Apex.MethodDeclaration.Parse(methodSig);
 
+            Assert.AreEqual(2, method.Modifiers.Count);
+            Assert.AreEqual("public", method.Modifiers[0]);
+            Assert.AreEqual("static", method.Modifiers[1]);
             Assert.AreEqual("void", method.ReturnType);
+            Assert.AreEqual("GetNumber", method.Identifier);
+
+            Assert.AreEqual(1, method.MethodParameters.Count);
+            Assert.AreEqual("string", method.MethodParameters[0].Type);
+            Assert.AreEqual("name", method.MethodParameters[0].Identifier);
+            Assert.AreEqual("/* Comment */", method.CodeInsideMethod);
         }
     }
 }

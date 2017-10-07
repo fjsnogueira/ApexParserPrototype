@@ -35,11 +35,27 @@ namespace ApexParserTest.Parser
         }
 
         [Test]
+        public void APrimitiveTypeIsOneOfSpecificKeywords()
+        {
+            Assert.AreEqual(ApexKeywords.Void, Apex.PrimitiveType.Parse(" void "));
+            Assert.AreEqual(ApexKeywords.Int, Apex.PrimitiveType.Parse(" int "));
+            Assert.AreEqual(ApexKeywords.Boolean, Apex.PrimitiveType.Parse(" boolean "));
+
+            // these keywords aren't types
+            Assert.Throws<ParseException>(() => Apex.PrimitiveType.Parse("class"));
+            Assert.Throws<ParseException>(() => Apex.PrimitiveType.Parse("sharing"));
+        }
+
+        [Test]
         public void ParameterDeclarationIsTypeAndNamePair()
         {
             var pd = Apex.ParameterDeclaration.Parse(" int a");
             Assert.AreEqual("int", pd.Type);
             Assert.AreEqual("a", pd.Identifier);
+
+            pd = Apex.ParameterDeclaration.Parse(" SomeClass b");
+            Assert.AreEqual("SomeClass", pd.Type);
+            Assert.AreEqual("b", pd.Identifier);
 
             Assert.Throws<ParseException>(() => Apex.ParameterDeclaration.Parse("Hello!"));
         }
@@ -194,6 +210,23 @@ namespace ApexParserTest.Parser
             // class declarations with bad methods
             Assert.Throws<ParseException>(() => Apex.ClassDeclaration.Parse(" class Test { void Main }"));
             Assert.Throws<ParseException>(() => Apex.ClassDeclaration.Parse("class Apex { int main() }"));
+        }
+
+        [Test]
+        public void ClassDeclarationCanHaveMultipleModifiers()
+        {
+            var cd = Apex.ClassDeclaration.Parse(" public with   sharing webservice class Program { }");
+            Assert.False(cd.Methods.Any());
+            Assert.AreEqual("Program", cd.Identifier);
+
+            Assert.AreEqual(3, cd.Modifiers.Count);
+            Assert.AreEqual("public", cd.Modifiers[0]);
+            Assert.AreEqual("with_sharing", cd.Modifiers[1]);
+            Assert.AreEqual("webservice", cd.Modifiers[2]);
+
+            // class declarations with bad methods
+            Assert.Throws<ParseException>(() => Apex.ClassDeclaration.Parse(" class with Test { }"));
+            Assert.Throws<ParseException>(() => Apex.ClassDeclaration.Parse("class sharing Test { }"));
         }
     }
 }

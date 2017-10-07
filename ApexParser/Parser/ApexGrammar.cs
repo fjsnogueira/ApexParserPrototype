@@ -76,13 +76,15 @@ namespace ApexParser.Parser
             from methodName in Identifier
             from parameters in MethodParameters
             from openBrace in Parse.Char('{').Token()
+            from contents in CommentParser.AnyComment.Select(c => $"/*{c}*/").Optional()
             from closeBrace in Parse.Char('}').Token()
             select new MethodSyntax
             {
                 Modifiers = modifiers.ToList(),
                 ReturnType = returnType,
                 Identifier = methodName,
-                MethodParameters = parameters
+                MethodParameters = parameters,
+                CodeInsideMethod = contents.GetOrElse(string.Empty)
             };
 
         // example: class Program { void main() {} }
