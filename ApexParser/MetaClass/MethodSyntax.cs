@@ -7,7 +7,7 @@ namespace ApexParser.MetaClass
     {
         public List<string> Attributes = new List<string>();
         public List<string> Modifiers = new List<string>();
-        public string ReturnType { get; set; }
+        public TypeSyntax ReturnType { get; set; }
         public string Identifier { get; set; }
 
         public List<ParameterSyntax> MethodParameters = new List<ParameterSyntax>();

@@ -19,20 +19,51 @@ namespace ApexParser.Parser
         )
         .Token().Named("Identifier");
 
+        // examples: System.debug
+        protected internal virtual Parser<IEnumerable<string>> QualifiedIdentifier =>
+            Identifier.DelimitedBy(Parse.Char('.').Token())
+                .Named("QualifiedIdentifier");
+
         // examples: /* default settings are OK */ //
         protected internal virtual CommentParser CommentParser { get; } = new CommentParser();
 
         // examples: int, void
-        protected internal virtual Parser<string> PrimitiveType =>
-            Parse.String(ApexKeywords.Int).Or(
-            Parse.String(ApexKeywords.Boolean)).Or(
+        protected internal virtual Parser<TypeSyntax> PrimitiveType =>
+            Parse.String(ApexKeywords.Boolean).Or(
+            Parse.String(ApexKeywords.Byte)).Or(
             Parse.String(ApexKeywords.Char)).Or(
+            Parse.String(ApexKeywords.Double)).Or(
+            Parse.String(ApexKeywords.Float)).Or(
+            Parse.String(ApexKeywords.Int)).Or(
+            Parse.String(ApexKeywords.Long)).Or(
+            Parse.String(ApexKeywords.Short)).Or(
             Parse.String(ApexKeywords.Void))
-                .Token().Text().Named("PrimitiveType");
+                .Token().Text().Select(n => new TypeSyntax(n))
+                .Named("PrimitiveType");
+
+        // examples: int, String, System.Collections.Hashtable
+        protected internal virtual Parser<TypeSyntax> NonGenericType =>
+            PrimitiveType.Or(QualifiedIdentifier.Select(qi => new TypeSyntax(qi)));
+
+        // examples: string, int, char
+        protected internal virtual Parser<IEnumerable<TypeSyntax>> TypeParameters =>
+            from open in Parse.Char('<').Token()
+            from types in TypeReference.DelimitedBy(Parse.Char(',').Token())
+            from close in Parse.Char('>').Token()
+            select types;
+
+        // example: string, List<string>, Map<string, List<boolean>>
+        protected internal virtual Parser<TypeSyntax> TypeReference =>
+            from type in NonGenericType
+            from parameters in TypeParameters.Optional()
+            select new TypeSyntax(type)
+            {
+                TypeParameters = parameters.GetOrElse(Enumerable.Empty<TypeSyntax>()).ToList()
+            };
 
         // example: string name
         protected internal virtual Parser<ParameterSyntax> ParameterDeclaration =>
-            from type in PrimitiveType.Or(Identifier)
+            from type in NonGenericType
             from name in Identifier
             select new ParameterSyntax(type, name);
 
@@ -72,7 +103,7 @@ namespace ApexParser.Parser
         // public static void Hello() {}
         protected internal virtual Parser<MethodSyntax> MethodDeclaration =>
             from modifiers in Modifier.Many()
-            from returnType in PrimitiveType.Or(Identifier)
+            from returnType in NonGenericType
             from methodName in Identifier
             from parameters in MethodParameters
             from openBrace in Parse.Char('{').Token()

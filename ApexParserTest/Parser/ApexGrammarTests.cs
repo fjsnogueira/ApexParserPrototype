@@ -26,7 +26,22 @@ namespace ApexParserTest.Parser
         }
 
         [Test]
-        public void AKeywordIsNotAnIdentifier()
+        public void QualifiedIdentifierIsAnStreamOfIdentifiersDelimitedByDots()
+        {
+            var qi = Apex.QualifiedIdentifier.Parse(" System.debug ").ToList();
+            Assert.AreEqual(2, qi.Count);
+            Assert.AreEqual("System", qi[0]);
+            Assert.AreEqual("debug", qi[1]);
+
+            qi = Apex.QualifiedIdentifier.Parse(@" System . Collections  . Generic ").ToList();
+            Assert.AreEqual(3, qi.Count);
+            Assert.AreEqual("System", qi[0]);
+            Assert.AreEqual("Collections", qi[1]);
+            Assert.AreEqual("Generic", qi[2]);
+        }
+
+        [Test]
+        public void KeywordIsNotAnIdentifier()
         {
             Assert.Throws<ParseException>(() => Apex.Identifier.Parse("class"));
             Assert.Throws<ParseException>(() => Apex.Identifier.Parse("public"));
@@ -35,11 +50,11 @@ namespace ApexParserTest.Parser
         }
 
         [Test]
-        public void APrimitiveTypeIsOneOfSpecificKeywords()
+        public void PrimitiveTypeIsOneOfSpecificKeywords()
         {
-            Assert.AreEqual(ApexKeywords.Void, Apex.PrimitiveType.Parse(" void "));
-            Assert.AreEqual(ApexKeywords.Int, Apex.PrimitiveType.Parse(" int "));
-            Assert.AreEqual(ApexKeywords.Boolean, Apex.PrimitiveType.Parse(" boolean "));
+            Assert.AreEqual(ApexKeywords.Void, Apex.PrimitiveType.Parse(" void ").Identifier);
+            Assert.AreEqual(ApexKeywords.Int, Apex.PrimitiveType.Parse(" int ").Identifier);
+            Assert.AreEqual(ApexKeywords.Boolean, Apex.PrimitiveType.Parse(" boolean ").Identifier);
 
             // these keywords aren't types
             Assert.Throws<ParseException>(() => Apex.PrimitiveType.Parse("class"));
@@ -47,14 +62,85 @@ namespace ApexParserTest.Parser
         }
 
         [Test]
+        public void NonGenericTypeIsAPrimitiveTypeOrAnIdentifier()
+        {
+            Assert.AreEqual(ApexKeywords.Void, Apex.NonGenericType.Parse(" void ").Identifier);
+            Assert.AreEqual("String", Apex.NonGenericType.Parse(" String ").Identifier);
+            Assert.AreEqual("String", Apex.NonGenericType.Parse(" String ").Identifier);
+
+            // not types or non-generic types
+            Assert.Throws<ParseException>(() => Apex.PrimitiveType.Parse("class"));
+            Assert.Throws<ParseException>(() => Apex.PrimitiveType.Parse("Map<string, string>"));
+        }
+
+        [Test]
+        public void TypeParametersIsACommaSeparatedListOfTypeReferencesEnclosedInAngleBraces()
+        {
+            var tp = Apex.TypeParameters.Parse("<string>").ToList();
+            Assert.AreEqual(1, tp.Count);
+            Assert.AreEqual("string", tp[0].Identifier);
+
+            tp = Apex.TypeParameters.Parse(" < System.Collections.Hashtable, string, int, void, System.Char > ").ToList();
+            Assert.AreEqual(5, tp.Count);
+
+            var type = tp[0];
+            Assert.AreEqual(2, type.Namespaces.Count);
+            Assert.AreEqual("System", type.Namespaces[0]);
+            Assert.AreEqual("Collections", type.Namespaces[1]);
+            Assert.AreEqual("Hashtable", type.Identifier);
+
+            Assert.AreEqual("string", tp[1].Identifier);
+            Assert.AreEqual("int", tp[2].Identifier);
+            Assert.AreEqual("void", tp[3].Identifier);
+
+            type = tp[4];
+            Assert.AreEqual(1, type.Namespaces.Count);
+            Assert.AreEqual("System", type.Namespaces.Single());
+            Assert.AreEqual("Char", type.Identifier);
+
+            // not types or non-generic types
+            Assert.Throws<ParseException>(() => Apex.TypeParameters.Parse("string"));
+            Assert.Throws<ParseException>(() => Apex.TypeParameters.Parse("Map<string, string>"));
+        }
+
+        [Test]
+        public void TypeReferenceIsAGenericOrNonGenericType()
+        {
+            var tr = Apex.TypeReference.Parse(" String ");
+            Assert.AreEqual("String", tr.Identifier);
+            Assert.False(tr.Namespaces.Any());
+            Assert.False(tr.TypeParameters.Any());
+
+            tr = Apex.TypeReference.Parse("List<string>");
+            Assert.AreEqual("List", tr.Identifier);
+            Assert.False(tr.Namespaces.Any());
+
+            Assert.AreEqual(1, tr.TypeParameters.Count);
+            Assert.AreEqual("string", tr.TypeParameters[0].Identifier);
+            Assert.False(tr.TypeParameters[0].Namespaces.Any());
+
+            tr = Apex.TypeReference.Parse(" System.Collections.Map < System.string, List<Guid> >");
+            Assert.AreEqual("Map", tr.Identifier);
+            Assert.AreEqual(2, tr.Namespaces.Count);
+            Assert.AreEqual("System", tr.Namespaces[0]);
+            Assert.AreEqual("Collections", tr.Namespaces[1]);
+
+            Assert.AreEqual(2, tr.TypeParameters.Count);
+            var tp = tr.TypeParameters[0];
+
+            Assert.AreEqual("string", tp.Identifier);
+            Assert.AreEqual(1, tp.Namespaces.Count);
+        }
+
+        [Test]
         public void ParameterDeclarationIsTypeAndNamePair()
         {
             var pd = Apex.ParameterDeclaration.Parse(" int a");
-            Assert.AreEqual("int", pd.Type);
+            Assert.AreEqual("int", pd.Type.Identifier);
             Assert.AreEqual("a", pd.Identifier);
 
             pd = Apex.ParameterDeclaration.Parse(" SomeClass b");
-            Assert.AreEqual("SomeClass", pd.Type);
+            Assert.AreEqual("SomeClass", pd.Type.Identifier);
             Assert.AreEqual("b", pd.Identifier);
 
             Assert.Throws<ParseException>(() => Apex.ParameterDeclaration.Parse("Hello!"));
@@ -67,11 +153,11 @@ namespace ApexParserTest.Parser
             Assert.AreEqual(2, pds.Count);
 
             var pd = pds[0];
-            Assert.AreEqual("int", pd.Type);
+            Assert.AreEqual("int", pd.Type.Identifier);
             Assert.AreEqual("a", pd.Identifier);
 
             pd = pds[1];
-            Assert.AreEqual("String", pd.Type);
+            Assert.AreEqual("String", pd.Type.Identifier);
             Assert.AreEqual("b", pd.Identifier);
 
             Assert.Throws<ParseException>(() => Apex.ParameterDeclaration.Parse("Hello!"));
@@ -98,15 +184,15 @@ namespace ApexParserTest.Parser
             Assert.AreEqual(3, mp.Count);
 
             var pd = mp[0];
-            Assert.AreEqual("Integer", pd.Type);
+            Assert.AreEqual("Integer", pd.Type.Identifier);
             Assert.AreEqual("a", pd.Identifier);
 
             pd = mp[1];
-            Assert.AreEqual("char", pd.Type);
+            Assert.AreEqual("char", pd.Type.Identifier);
             Assert.AreEqual("b", pd.Identifier);
 
             pd = mp[2];
-            Assert.AreEqual("Boolean", pd.Type);
+            Assert.AreEqual("Boolean", pd.Type.Identifier);
             Assert.AreEqual("c123", pd.Identifier);
 
             // bad input examples
@@ -132,7 +218,7 @@ namespace ApexParserTest.Parser
             var md = Apex.MethodDeclaration.Parse("void Test() {}");
             Assert.False(md.Modifiers.Any());
             Assert.False(md.MethodParameters.Any());
-            Assert.AreEqual("void", md.ReturnType);
+            Assert.AreEqual("void", md.ReturnType.Identifier);
             Assert.AreEqual("Test", md.Identifier);
 
             // method with parameters
@@ -143,18 +229,18 @@ namespace ApexParserTest.Parser
 
             Assert.False(md.Modifiers.Any());
             Assert.AreEqual(2, md.MethodParameters.Count);
-            Assert.AreEqual("string", md.ReturnType);
+            Assert.AreEqual("string", md.ReturnType.Identifier);
             Assert.AreEqual("Hello", md.Identifier);
 
             var mp = md.MethodParameters;
             Assert.AreEqual(2, mp.Count);
 
             var pd = mp[0];
-            Assert.AreEqual("String", pd.Type);
+            Assert.AreEqual("String", pd.Type.Identifier);
             Assert.AreEqual("name", pd.Identifier);
 
             pd = mp[1];
-            Assert.AreEqual("Boolean", pd.Type);
+            Assert.AreEqual("Boolean", pd.Type.Identifier);
             Assert.AreEqual("newLine", pd.Identifier);
 
             // method with visibility
@@ -165,7 +251,7 @@ namespace ApexParserTest.Parser
 
             Assert.AreEqual(1, md.Modifiers.Count);
             Assert.AreEqual("public", md.Modifiers[0]);
-            Assert.AreEqual("int", md.ReturnType);
+            Assert.AreEqual("int", md.ReturnType.Identifier);
             Assert.AreEqual("Add", md.Identifier);
             Assert.AreEqual(3, md.MethodParameters.Count);
 
@@ -173,7 +259,7 @@ namespace ApexParserTest.Parser
             Assert.AreEqual(3, mp.Count);
 
             pd = mp[0];
-            Assert.AreEqual("int", pd.Type);
+            Assert.AreEqual("int", pd.Type.Identifier);
             Assert.AreEqual("x", pd.Identifier);
 
             // invalid input
@@ -203,7 +289,7 @@ namespace ApexParserTest.Parser
             Assert.AreEqual("Program", cd.Identifier);
 
             var md = cd.Methods.Single();
-            Assert.AreEqual("void", md.ReturnType);
+            Assert.AreEqual("void", md.ReturnType.Identifier);
             Assert.AreEqual("main", md.Identifier);
             Assert.False(md.MethodParameters.Any());
 

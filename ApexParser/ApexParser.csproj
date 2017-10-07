@@ -63,6 +63,7 @@
     <Compile Include="MetaClass\ParameterSyntax.cs" />
     <Compile Include="MetaClass\MethodSyntax.cs" />
     <Compile Include="MetaClass\SyntaxType.cs" />
+    <Compile Include="MetaClass\TypeSyntax.cs" />
     <Compile Include="Parser\ApexGrammar.cs" />
     <Compile Include="Parser\ApexKeywords.cs" />
     <Compile Include="Program.cs" />
@@ -71,10 +72,6 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="ApexCode\MethodsOne.txt" />
-    <Content Include="ApexCode\MethodsTwo.txt" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
