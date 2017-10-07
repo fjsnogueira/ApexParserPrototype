@@ -127,6 +127,9 @@
   <data name="ClassTwo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\ApexTestClasses\ClassTwo.cls;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;windows-1251</value>
   </data>
+  <data name="ClassTwo_Formatted" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\ApexTestClasses\ClassTwo_Formatted.cls;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;windows-1251</value>
+  </data>
   <data name="Demo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\ApexTestClasses\Demo.cls;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;windows-1251</value>
   </data>

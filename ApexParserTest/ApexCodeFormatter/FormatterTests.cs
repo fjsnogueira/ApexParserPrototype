@@ -18,5 +18,12 @@ namespace ApexParserTest.ApexCodeFormatter
             var formatted = GetFormatedApexCode(Resources.ClassOne);
             Assert.AreEqual(Resources.ClassOne_Formatted, formatted);
         }
+
+        [Test]
+        public void ApexCodeFormatterFormatsClassTwo()
+        {
+            var formatted = GetFormatedApexCode(Resources.ClassTwo);
+            Assert.AreEqual(Resources.ClassTwo_Formatted, formatted);
+        }
     }
 }
