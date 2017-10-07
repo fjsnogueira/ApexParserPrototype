@@ -143,6 +143,12 @@ namespace ApexParserTest.Parser
             Assert.AreEqual("SomeClass", pd.Type.Identifier);
             Assert.AreEqual("b", pd.Identifier);
 
+            pd = Apex.ParameterDeclaration.Parse(" List<string> stringList");
+            Assert.AreEqual("List", pd.Type.Identifier);
+            Assert.AreEqual(1, pd.Type.TypeParameters.Count);
+            Assert.AreEqual("string", pd.Type.TypeParameters[0].Identifier);
+            Assert.AreEqual("stringList", pd.Identifier);
+
             Assert.Throws<ParseException>(() => Apex.ParameterDeclaration.Parse("Hello!"));
         }
 
@@ -179,7 +185,7 @@ namespace ApexParserTest.Parser
         [Test]
         public void MethodParametersIsCommaSeparatedParameterDeclarationsWithinBraces()
         {
-            var mp = Apex.MethodParameters.Parse(" (Integer a, char b,  Boolean c123 ) ");
+            var mp = Apex.MethodParameters.Parse(" (Integer a, char b,  System.List<Boolean> c123 ) ");
             Assert.NotNull(mp);
             Assert.AreEqual(3, mp.Count);
 
@@ -192,7 +198,11 @@ namespace ApexParserTest.Parser
             Assert.AreEqual("b", pd.Identifier);
 
             pd = mp[2];
-            Assert.AreEqual("Boolean", pd.Type.Identifier);
+            Assert.AreEqual("List", pd.Type.Identifier);
+            Assert.AreEqual(1, pd.Type.Namespaces.Count);
+            Assert.AreEqual("System", pd.Type.Namespaces[0]);
+            Assert.AreEqual(1, pd.Type.TypeParameters.Count);
+            Assert.AreEqual("Boolean", pd.Type.TypeParameters[0].Identifier);
             Assert.AreEqual("c123", pd.Identifier);
 
             // bad input examples
@@ -245,13 +255,15 @@ namespace ApexParserTest.Parser
 
             // method with visibility
             md = Apex.MethodDeclaration.Parse(@"
-            public int Add(int x, int y, int z)
+            public List<int> Add(int x, int y, int z)
             {
             } ");
 
             Assert.AreEqual(1, md.Modifiers.Count);
             Assert.AreEqual("public", md.Modifiers[0]);
-            Assert.AreEqual("int", md.ReturnType.Identifier);
+            Assert.AreEqual("List", md.ReturnType.Identifier);
+            Assert.AreEqual(1, md.ReturnType.TypeParameters.Count);
+            Assert.AreEqual("int", md.ReturnType.TypeParameters[0].Identifier);
             Assert.AreEqual("Add", md.Identifier);
             Assert.AreEqual(3, md.MethodParameters.Count);
 
