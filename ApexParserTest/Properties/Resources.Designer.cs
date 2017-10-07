@@ -75,6 +75,22 @@ namespace ApexParserTest.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to public with sharing class ClassOne
+        ///{
+        ///    public void CallClassTwo()
+        ///    {
+        ///        ClassTwo classTwo = new ClassTwo();
+        ///        System.debug(&apos;Test&apos;);
+        ///    }
+        ///}.
+        /// </summary>
+        internal static string ClassOne_Formatted {
+            get {
+                return ResourceManager.GetString("ClassOne_Formatted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to public with sharing class ClassTwo {
         ///    public ClassTwo() {
         ///        System.debug(&apos;Test&apos;);

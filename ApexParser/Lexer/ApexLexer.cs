@@ -19,9 +19,7 @@ namespace ApexParser.Lexer
                 Result result = lexer.Next();
                 if (result != null)
                 {
-
                     apexTokenList.Add(new Token(result.TokenType, result.TokenContent));
-
                 }
                 else
                 {

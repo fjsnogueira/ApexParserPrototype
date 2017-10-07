@@ -121,6 +121,9 @@
   <data name="ClassOne" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\ApexTestClasses\ClassOne.cls;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;windows-1251</value>
   </data>
+  <data name="ClassOne_Formatted" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\ApexTestClasses\ClassOne_Formatted.cls;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;windows-1251</value>
+  </data>
   <data name="ClassTwo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\ApexTestClasses\ClassTwo.cls;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;windows-1251</value>
   </data>
