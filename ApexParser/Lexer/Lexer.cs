@@ -18,8 +18,9 @@ namespace ApexParser.Lexer
         public Result Next()
         {
             if (_lineRemaining.Length == 0)
+            {
                 return null;
-
+            }
 
             foreach (var def in _tokenDefinitions)
             {
@@ -49,7 +50,6 @@ namespace ApexParser.Lexer
             }
 
             _lineRemaining = _lineRemaining.Substring(1);
-
 
             Console.ReadLine();
             return null;

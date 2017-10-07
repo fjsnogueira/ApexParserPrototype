@@ -2,9 +2,6 @@
 {
     public class ParameterSyntax
     {
-        public TypeSyntax Type { set; get; }
-        public string Identifier { get; set; }
-
         public ParameterSyntax(string type, string identifier)
             : this(new TypeSyntax(type), identifier)
         {
@@ -15,5 +12,9 @@
             Type = type;
             Identifier = identifier;
         }
+
+        public TypeSyntax Type { get; set; }
+
+        public string Identifier { get; set; }
     }
 }

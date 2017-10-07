@@ -27,6 +27,12 @@ namespace ApexParser.Parser
         // examples: /* default settings are OK */ //
         protected internal virtual CommentParser CommentParser { get; } = new CommentParser();
 
+        // example: @isTest
+        protected internal virtual Parser<string> Annotation =>
+            from at in Parse.Char('@').Token()
+            from identifier in Identifier
+            select identifier;
+
         // examples: int, void
         protected internal virtual Parser<TypeSyntax> PrimitiveType =>
             Parse.String(ApexKeywords.Boolean).Or(
@@ -102,6 +108,8 @@ namespace ApexParser.Parser
         // void Test() {}
         // public static void Hello() {}
         protected internal virtual Parser<MethodSyntax> MethodDeclaration =>
+            from comments in CommentParser.AnyComment.Many()
+            from annotations in Annotation.Many()
             from modifiers in Modifier.Many()
             from returnType in TypeReference
             from methodName in Identifier
@@ -111,9 +119,11 @@ namespace ApexParser.Parser
             from closeBrace in Parse.Char('}').Token()
             select new MethodSyntax
             {
+                Identifier = methodName,
+                CodeComments = comments.ToList(),
+                Attributes = annotations.ToList(),
                 Modifiers = modifiers.ToList(),
                 ReturnType = returnType,
-                Identifier = methodName,
                 MethodParameters = parameters,
                 CodeInsideMethod = methodBody.Trim()
             };
@@ -124,6 +134,8 @@ namespace ApexParser.Parser
 
         // example: class Program { void main() {} }
         protected internal virtual Parser<ClassSyntax> ClassDeclaration =>
+            from comments in CommentParser.AnyComment.Many()
+            from annotations in Annotation.Many()
             from modifiers in Modifier.Many()
             from @class in Parse.String(ApexKeywords.Class).Token()
             from className in Identifier
@@ -133,6 +145,8 @@ namespace ApexParser.Parser
             select new ClassSyntax
             {
                 Identifier = className,
+                CodeComments = comments.ToList(),
+                Attributes = annotations.ToList(),
                 Modifiers = modifiers.ToList(),
                 Methods = methods.ToList()
             };

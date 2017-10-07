@@ -50,6 +50,12 @@ namespace ApexParserTest.Parser
         }
 
         [Test]
+        public void AnnotationBeginsWithAtSign()
+        {
+            Assert.AreEqual("isTest", Apex.Annotation.Parse(" @isTest "));
+        }
+
+        [Test]
         public void PrimitiveTypeIsOneOfSpecificKeywords()
         {
             Assert.AreEqual(ApexKeywords.Void, Apex.PrimitiveType.Parse(" void ").Identifier);
@@ -226,6 +232,7 @@ namespace ApexParserTest.Parser
         {
             // parameterless method
             var md = Apex.MethodDeclaration.Parse("void Test() {}");
+            Assert.False(md.Attributes.Any());
             Assert.False(md.Modifiers.Any());
             Assert.False(md.MethodParameters.Any());
             Assert.AreEqual("void", md.ReturnType.Identifier);
@@ -237,6 +244,7 @@ namespace ApexParserTest.Parser
             {
             } ");
 
+            Assert.False(md.Attributes.Any());
             Assert.False(md.Modifiers.Any());
             Assert.AreEqual(2, md.MethodParameters.Count);
             Assert.AreEqual("string", md.ReturnType.Identifier);
@@ -259,6 +267,7 @@ namespace ApexParserTest.Parser
             {
             } ");
 
+            Assert.False(md.Attributes.Any());
             Assert.AreEqual(1, md.Modifiers.Count);
             Assert.AreEqual("public", md.Modifiers[0]);
             Assert.AreEqual("List", md.ReturnType.Identifier);
@@ -274,6 +283,15 @@ namespace ApexParserTest.Parser
             Assert.AreEqual("int", pd.Type.Identifier);
             Assert.AreEqual("x", pd.Identifier);
 
+            // a method with annotation
+            md = Apex.MethodDeclaration.Parse("@isTest void Test() {}");
+            Assert.AreEqual(1, md.Attributes.Count);
+            Assert.AreEqual("isTest", md.Attributes[0]);
+            Assert.False(md.Modifiers.Any());
+            Assert.False(md.MethodParameters.Any());
+            Assert.AreEqual("void", md.ReturnType.Identifier);
+            Assert.AreEqual("Test", md.Identifier);
+
             // invalid input
             Assert.Throws<ParseException>(() => Apex.MethodDeclaration.Parse("void Test {}"));
             Assert.Throws<ParseException>(() => Apex.MethodDeclaration.Parse("void AnotherTest()() {}"));
@@ -284,6 +302,7 @@ namespace ApexParserTest.Parser
         public void ClassDeclarationCanBeEmpty()
         {
             var cd = Apex.ClassDeclaration.Parse(" class Test {}");
+            Assert.False(cd.Attributes.Any());
             Assert.False(cd.Methods.Any());
             Assert.False(cd.Modifiers.Any());
             Assert.AreEqual("Test", cd.Identifier);
@@ -291,6 +310,21 @@ namespace ApexParserTest.Parser
             // incomplete class declarations
             Assert.Throws<ParseException>(() => Apex.ClassDeclaration.Parse(" class Test {"));
             Assert.Throws<ParseException>(() => Apex.ClassDeclaration.Parse("class {}"));
+        }
+
+        [Test]
+        public void ClassDeclarationCanHaveAnnotations()
+        {
+            var cd = Apex.ClassDeclaration.Parse("@one @two class Three {}");
+            Assert.AreEqual(2, cd.Attributes.Count);
+            Assert.AreEqual("one", cd.Attributes[0]);
+            Assert.AreEqual("two", cd.Attributes[1]);
+            Assert.False(cd.Methods.Any());
+            Assert.False(cd.Modifiers.Any());
+            Assert.AreEqual("Three", cd.Identifier);
+
+            // bad class declarations
+            Assert.Throws<ParseException>(() => Apex.ClassDeclaration.Parse("@class Test {"));
         }
 
         [Test]

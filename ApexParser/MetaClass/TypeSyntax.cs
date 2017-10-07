@@ -8,10 +8,6 @@ namespace ApexParser.MetaClass
 {
     public class TypeSyntax : BaseSyntax
     {
-        public List<string> Namespaces { get; set; }
-        public string Identifier { get; set; }
-        public List<TypeSyntax> TypeParameters { get; set; }
-
         public TypeSyntax(IEnumerable<string> qualifiedName)
         {
             Namespaces = qualifiedName.ToList();
@@ -35,5 +31,11 @@ namespace ApexParser.MetaClass
             Identifier = template.Identifier;
             TypeParameters = template.TypeParameters;
         }
+
+        public List<string> Namespaces { get; set; }
+
+        public string Identifier { get; set; }
+
+        public List<TypeSyntax> TypeParameters { get; set; }
     }
 }
