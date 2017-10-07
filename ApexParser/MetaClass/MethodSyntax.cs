@@ -5,18 +5,21 @@ namespace ApexParser.MetaClass
 {
     public class MethodSyntax : BaseSyntax
     {
-        public List<string> Attributes = new List<string>();
-        public List<string> Modifiers = new List<string>();
-        public string ReturnType { get; set; }
-        public string Identifier { get; set; }
-
-        public List<ParameterSyntax> MethodParameters = new List<ParameterSyntax>();
-
-        public string CodeInsideMethod { get; set; }
-
         public MethodSyntax()
         {
             Kind = SyntaxType.Method;
         }
+
+        public List<string> Attributes { get; set; } = new List<string>();
+
+        public List<string> Modifiers { get; set; } = new List<string>();
+
+        public TypeSyntax ReturnType { get; set; }
+
+        public string Identifier { get; set; }
+
+        public List<ParameterSyntax> MethodParameters { get; set; } = new List<ParameterSyntax>();
+
+        public string CodeInsideMethod { get; set; }
     }
 }

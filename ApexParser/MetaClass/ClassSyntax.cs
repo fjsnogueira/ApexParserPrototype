@@ -8,14 +8,17 @@ namespace ApexParser.MetaClass
 {
     public class ClassSyntax : BaseSyntax
     {
-        public List<string> Attributes = new List<string>();
-        public List<string> Modifiers = new List<string>();
-        public string Identifier { get; set; }
-        public List<MethodSyntax> Methods = new List<MethodSyntax>();
-
         public ClassSyntax()
         {
             Kind = SyntaxType.Class;
         }
+
+        public List<string> Attributes { get; set; } = new List<string>();
+
+        public List<string> Modifiers { get; set; } = new List<string>();
+
+        public string Identifier { get; set; }
+
+        public List<MethodSyntax> Methods { get; set; } = new List<MethodSyntax>();
     }
 }

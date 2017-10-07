@@ -23,7 +23,6 @@
                 new TokenDefinition(@"(?i:abstract)", TokenType.AccessModifier),
                 new TokenDefinition(@"(?i:\bfinal\b)", TokenType.AccessModifier),
 
-
                 new TokenDefinition(@"\bget\b", TokenType.KwGetSet),
                 new TokenDefinition(@"\bset\b", TokenType.KwGetSet),
                 new TokenDefinition(@"\binterface\b", TokenType.KwInterface),
@@ -36,13 +35,13 @@
                 new TokenDefinition(@"\breturn\b", TokenType.KwReturn),
                 new TokenDefinition(@"\bwebservice\b", TokenType.KwWebService),
 
-                // if, for, while, else 
+                // if, for, while, else
                 new TokenDefinition(@"\bfor\b", TokenType.KwFor),
                 new TokenDefinition(@"\bif\b", TokenType.KwIf),
                 new TokenDefinition(@"\belse\b", TokenType.KwElse),
                 new TokenDefinition(@"\bwhile\b", TokenType.KwWhile),
 
-                // exception 
+                // exception
                 new TokenDefinition(@"\bcatch\b", TokenType.KwCatch),
                 new TokenDefinition(@"\btry\b", TokenType.KwTry),
                 new TokenDefinition(@"\bthrow\b", TokenType.KwThrow),
@@ -54,7 +53,6 @@
                 new TokenDefinition(@"\bvoid\b", TokenType.KwVoid),
 
                 new TokenDefinition(@"(?i:\btestmethod\b)", TokenType.KwTestMethod),
-
 
                 new TokenDefinition(@"\b[A-Za-z]*\s*<(.*?)>", TokenType.ClassNameGeneric),
                 new TokenDefinition(@"[A-Za-z]*\s*\[\s*\]", TokenType.ClassNameArray),
@@ -69,7 +67,7 @@
                 new TokenDefinition(@"(?i:JSON.serialize)", TokenType.JsonSerialize),
                 new TokenDefinition(@"(?i)\.class", TokenType.KwClassType),
 
-                // APEX Attributes 
+                // APEX Attributes
                 new TokenDefinition(@"(?i)\@\s*isTest\s*\(\s*SeeAllData\s*\=\s*(true|false)\s*\)",TokenType.Attrubute),
                 new TokenDefinition(@"(?i)@\s*TestVisible", TokenType.Attrubute),
                 new TokenDefinition(@"(?i)@\s*TestSetup", TokenType.Attrubute),
@@ -87,9 +85,7 @@
                 new TokenDefinition(@"(?i)@\s*InvocableVariable", TokenType.Attrubute),
                 new TokenDefinition(@"(?i)@\s*ReadOnly", TokenType.Attrubute),
 
-
                 new TokenDefinition(@";", TokenType.StatmentTerminator),
-
 
                 //    new TokenDefinition(@"<(.*?)>", TokenType.ClassNameGeneric),
 
@@ -105,31 +101,24 @@
                 new TokenDefinition(@"\,", TokenType.Comma),
                 new TokenDefinition(@":", TokenType.Colon),
 
-
                 new TokenDefinition(@"[-+]?[0-9]*\.?[0-9]+", TokenType.Decimel),
                 new TokenDefinition(@"(?<![-.])\b[0-9]+\b(?!\.[0-9])", TokenType.Integer),
 
-
                 new TokenDefinition(@"[_A-Za-z0-9!]+", TokenType.Word),
 
-
                 new TokenDefinition(@"\.", TokenType.Dot),
-
 
                 new TokenDefinition(@"\r\n", TokenType.Return),
                 new TokenDefinition(@"\n", TokenType.Return),
 
-
                 new TokenDefinition(@"\{", TokenType.OpenCurlyBrackets),
                 new TokenDefinition(@"\}", TokenType.CloseCurlyBrackets),
 
-                //   new TokenDefinition(@"\(\)", TokenType.EmptyBrackets),
+                ////new TokenDefinition(@"\(\)", TokenType.EmptyBrackets),
                 new TokenDefinition(@"\(", TokenType.OpenBrackets),
                 new TokenDefinition(@"\)", TokenType.CloseBrackets),
 
-
                 new TokenDefinition(@"\s", TokenType.Space),
-
 
                 new TokenDefinition(@"\#|\^|\?|\`|\'|\-|\""|\(|\)|\[|\]|\=|\/|\+|\~|\<|\&|\%|\$|\*|\\|\|",
                     TokenType.Anything)

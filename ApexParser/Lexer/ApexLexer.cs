@@ -14,7 +14,6 @@ namespace ApexParser.Lexer
             List<Token> apexTokenList = new List<Token>();
             Lexer lexer = new Lexer(apexCode);
 
-
             while (true)
             {
                 Result result = lexer.Next();
@@ -22,7 +21,7 @@ namespace ApexParser.Lexer
                 {
                     if (result.TokenType == TokenType.Space || result.TokenType == TokenType.Return)
                     {
-
+                        ////
                     }
                     else
                     {
@@ -37,11 +36,10 @@ namespace ApexParser.Lexer
 
             foreach (var apexToken in apexTokenList)
             {
-                //    Console.WriteLine($"{apexToken.TokenType}  ::::::::  {apexToken.Content.Trim()}");
+                ////Console.WriteLine($"{apexToken.TokenType}  ::::::::  {apexToken.Content.Trim()}");
             }
 
             return apexTokenList;
-
         }
     }
 }
