@@ -76,7 +76,7 @@ namespace ApexParser.Parser
             from methodName in Identifier
             from parameters in MethodParameters
             from openBrace in Parse.Char('{').Token()
-            from contents in CommentParser.AnyComment.Select(c => $"/*{c}*/").Optional()
+            from methodBody in MethodBody
             from closeBrace in Parse.Char('}').Token()
             select new MethodSyntax
             {
@@ -84,8 +84,12 @@ namespace ApexParser.Parser
                 ReturnType = returnType,
                 Identifier = methodName,
                 MethodParameters = parameters,
-                CodeInsideMethod = contents.GetOrElse(string.Empty)
+                CodeInsideMethod = methodBody.Trim()
             };
+
+        // dummy parser for the method body
+        protected internal virtual Parser<string> MethodBody =>
+            Parse.CharExcept('}').Many().Text();
 
         // example: class Program { void main() {} }
         protected internal virtual Parser<ClassSyntax> ClassDeclaration =>
