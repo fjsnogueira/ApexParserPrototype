@@ -19,7 +19,7 @@ namespace ApexParserTest.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -61,78 +61,29 @@ namespace ApexParserTest.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to global with sharing class MethodOne
+        ///   Looks up a localized string similar to public class Demo
         ///{
-        ///    void StringVoid()
-        ///    {
-        ///    }
+        ///	public static void RunContactDemo()
+        ///	{
+        ///		Contact contactNew = new Contact(LastName = &apos;Jay&apos;, EMail = &apos;abc@abc.com&apos;);
+        ///		insert contactNew;
+        ///		System.debug(contactNew.Id);
         ///
-        ///    public void StringPublic()
-        ///    {
-        ///    }
+        ///		List&lt;Contact&gt; contacts = [SELECT Id, Email FROM Contact WHERE Id = :contactNew.Id];
+        ///		for (Contact c : contacts) {
+        ///			System.debug(c.Email);
+        ///			c.Email = &apos;new@new.com&apos;;
+        ///		}
         ///
-        ///    string GetString()
-        ///    {
-        ///        return &apos;Hello World&apos;;
-        ///    }
+        ///		update contacts;
         ///
-        ///    public string GetStringPublic()
-        ///    {
-        ///        return &apos;Hello World&apos;;
-        ///    }
-        ///
-        ///    private string GetStringprivate()
-        ///    {
-        ///        return &apos;Hello World&apos;;
-        ///    }
-        ///
-        ///    global string GetStringglobal()
-        ///    {
-        ///        return &apos;Hello World&apos;;
-        ///    }
-        ///
-        ///    List&lt;string&gt; GetGenericList()
-        ///    {
-        ///        return new List&lt;string&gt;();
-        ///    }
-        ///
-        ///    Map&lt; [rest of string was truncated]&quot;;.
+        ///		contacts = [SELECT Id, Email FROM Contact WHERE Id = :contactNew.Id];
+        ///		for (Contact c : contacts) {
+        ///			System.debug(c.Email [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string MethodsOne {
+        internal static string Demo {
             get {
-                return ResourceManager.GetString("MethodsOne", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to @isTest
-        ///public with sharing class MethodTwo
-        ///{
-        ///    @isTest public static void TestMethodOne()
-        ///    {
-        ///        System.debug(&apos;TestMethodOne&apos;);
-        ///    }
-        ///
-        ///    @isTest static void TestMethodThree()
-        ///    {
-        ///        System.debug(&apos;TestMethodThree&apos;);
-        ///    }
-        ///
-        ///    // Does Not Work
-        ///    static testMethod void TestMethodFour()
-        ///    {
-        ///        System.debug(&apos;TestMethodFour&apos;);
-        ///    }
-        ///
-        ///    public testMethod static void TestMethodTwo()
-        ///    {
-        ///        System.debug(&apos;TestMethodTwo&apos;);
-        ///    }
-        ///}.
-        /// </summary>
-        internal static string MethodsTwo {
-            get {
-                return ResourceManager.GetString("MethodsTwo", resourceCulture);
+                return ResourceManager.GetString("Demo", resourceCulture);
             }
         }
     }

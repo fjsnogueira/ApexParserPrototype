@@ -18,7 +18,7 @@ namespace ApexParserTest.Parser
         [Test]
         public void MethodsOneTest()
         {
-            var cd = Apex.ClassDeclaration.Parse(Resources.MethodsOne);
+            var cd = Apex.ClassDeclaration.Parse(Resources.Demo);
             Assert.AreEqual("MethodOne", cd.Identifier);
             Assert.AreEqual(8, cd.Methods.Count);
 
@@ -101,7 +101,7 @@ namespace ApexParserTest.Parser
         [Test]
         public void MethodsTwoTest()
         {
-            var cd = Apex.ClassDeclaration.Parse(Resources.MethodsTwo);
+            var cd = Apex.ClassDeclaration.Parse(Resources.Demo);
             Assert.AreEqual("MethodTwo", cd.Identifier);
             Assert.AreEqual(4, cd.Methods.Count);
 

@@ -19,14 +19,9 @@ namespace ApexParser.Lexer
                 Result result = lexer.Next();
                 if (result != null)
                 {
-                    if (result.TokenType == TokenType.Space || result.TokenType == TokenType.Return)
-                    {
-                        ////
-                    }
-                    else
-                    {
-                        apexTokenList.Add(new Token(result.TokenType, result.TokenContent));
-                    }
+
+                    apexTokenList.Add(new Token(result.TokenType, result.TokenContent));
+
                 }
                 else
                 {
