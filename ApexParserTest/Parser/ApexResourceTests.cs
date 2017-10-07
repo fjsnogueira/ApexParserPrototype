@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +19,13 @@ namespace ApexParserTest.Parser
         [Test]
         public void MethodsOneTest()
         {
-            var cd = Apex.ClassDeclaration.Parse(Resources.Demo);
+
+            string myDevdir = @"C:\DevSharp";
+            string apexCode = File.ReadAllText(myDevdir + @"\ApexParser\SalesForceApexSharp\src\classes\Demo.cls");
+
+
+
+            var cd = Apex.ClassDeclaration.Parse(apexCode); // can we use the real file
             Assert.AreEqual("MethodOne", cd.Identifier);
             Assert.AreEqual(8, cd.Methods.Count);
 
@@ -101,7 +108,12 @@ namespace ApexParserTest.Parser
         [Test]
         public void MethodsTwoTest()
         {
-            var cd = Apex.ClassDeclaration.Parse(Resources.Demo);
+
+            string myDevdir = @"C:\DevSharp";
+            string apexCode = File.ReadAllText(myDevdir + @"\ApexParser\SalesForceApexSharp\src\classes\Demo.cls");
+
+
+            var cd = Apex.ClassDeclaration.Parse(apexCode); // can we use the real file
             Assert.AreEqual("MethodTwo", cd.Identifier);
             Assert.AreEqual(4, cd.Methods.Count);
 

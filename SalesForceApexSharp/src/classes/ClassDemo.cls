@@ -1,5 +1,12 @@
+/*
+* This  is a comment line one
+* This is a comment // line two
+*/
+
 public class ClassDemo extends ClassBaseDemo implements IDemoOne , IDemoTwo {
-    public override void MethodThree() { // This is a Method
-        Integer num = 5;
+    // This is a Method
+    public override void MethodThree() {
+        // This is variable.
+        Integer num  = 5;
     }
 }

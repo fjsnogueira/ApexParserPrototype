@@ -59,32 +59,5 @@ namespace ApexParserTest.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to public class Demo
-        ///{
-        ///	public static void RunContactDemo()
-        ///	{
-        ///		Contact contactNew = new Contact(LastName = &apos;Jay&apos;, EMail = &apos;abc@abc.com&apos;);
-        ///		insert contactNew;
-        ///		System.debug(contactNew.Id);
-        ///
-        ///		List&lt;Contact&gt; contacts = [SELECT Id, Email FROM Contact WHERE Id = :contactNew.Id];
-        ///		for (Contact c : contacts) {
-        ///			System.debug(c.Email);
-        ///			c.Email = &apos;new@new.com&apos;;
-        ///		}
-        ///
-        ///		update contacts;
-        ///
-        ///		contacts = [SELECT Id, Email FROM Contact WHERE Id = :contactNew.Id];
-        ///		for (Contact c : contacts) {
-        ///			System.debug(c.Email [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string Demo {
-            get {
-                return ResourceManager.GetString("Demo", resourceCulture);
-            }
-        }
     }
 }
