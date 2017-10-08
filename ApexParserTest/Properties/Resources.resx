@@ -117,4 +117,26 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="ClassOne" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\ApexTestClasses\ClassOne.cls;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;windows-1251</value>
+  </data>
+  <data name="ClassOne_Formatted" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\ApexTestClasses\ClassOne_Formatted.cls;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;windows-1251</value>
+  </data>
+  <data name="ClassTwo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\ApexTestClasses\ClassTwo.cls;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;windows-1251</value>
+  </data>
+  <data name="ClassTwo_Formatted" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\ApexTestClasses\ClassTwo_Formatted.cls;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;windows-1251</value>
+  </data>
+  <data name="ClassWithComments" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\ApexTestClasses\ClassWithComments.cls;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;windows-1251</value>
+  </data>
+  <data name="ClassWithComments_Formatted" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\ApexTestClasses\ClassWithComments_Formatted.cls;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;windows-1251</value>
+  </data>
+  <data name="Demo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\ApexTestClasses\Demo.cls;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;windows-1251</value>
+  </data>
 </root>

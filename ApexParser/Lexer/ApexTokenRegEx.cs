@@ -68,7 +68,7 @@
                 new TokenDefinition(@"(?i)\.class", TokenType.KwClassType),
 
                 // APEX Attributes
-                new TokenDefinition(@"(?i)\@\s*isTest\s*\(\s*SeeAllData\s*\=\s*(true|false)\s*\)",TokenType.Attrubute),
+                new TokenDefinition(@"(?i)\@\s*isTest\s*\(\s*SeeAllData\s*\=\s*(true|false)\s*\)", TokenType.Attrubute),
                 new TokenDefinition(@"(?i)@\s*TestVisible", TokenType.Attrubute),
                 new TokenDefinition(@"(?i)@\s*TestSetup", TokenType.Attrubute),
                 new TokenDefinition(@"(?i)@\s*IsTest", TokenType.Attrubute),
@@ -85,13 +85,12 @@
                 new TokenDefinition(@"(?i)@\s*InvocableVariable", TokenType.Attrubute),
                 new TokenDefinition(@"(?i)@\s*ReadOnly", TokenType.Attrubute),
 
-                new TokenDefinition(@";", TokenType.StatmentTerminator),
+                new TokenDefinition(@";", TokenType.StatementTerminator),
 
-                //    new TokenDefinition(@"<(.*?)>", TokenType.ClassNameGeneric),
-
-                //  new TokenDefinition(@"\bList<\b(.*?)>", TokenType.ClassNameGeneric),
-                //  new TokenDefinition(@"\Set<\b(.*?)>", TokenType.ClassNameGeneric),
-                //  new TokenDefinition(@"\bMap<\b(.*?)>", TokenType.ClassNameGeneric),
+                ////new TokenDefinition(@"<(.*?)>", TokenType.ClassNameGeneric),
+                ////new TokenDefinition(@"\bList<\b(.*?)>", TokenType.ClassNameGeneric),
+                ////new TokenDefinition(@"\Set<\b(.*?)>", TokenType.ClassNameGeneric),
+                ////new TokenDefinition(@"\bMap<\b(.*?)>", TokenType.ClassNameGeneric),
 
                 new TokenDefinition(@"\+\+", TokenType.Equal),
                 new TokenDefinition(@"\=\=", TokenType.Equal),

@@ -11,7 +11,6 @@
         QuotedString,
         Return,
 
-
         CommentStart,
         CommentEnd,
         CommentLine,
@@ -22,11 +21,10 @@
         OpenBrackets,
         CloseBrackets,
 
-
         Word,
         Space,
         Anything,
-        StatmentTerminator,
+        StatementTerminator,
         Top,
         End,
         TestAttrubute,
@@ -38,7 +36,6 @@
         ClassNameArray,
         ClassNameArraySize,
         ClassName,
-
 
         MethodName,
         Integer,
@@ -74,12 +71,10 @@
         KwWhile,
         KwThrow,
 
-
         KwExtends,
         KwImplements,
         KwInterface,
         KwEnum,
-
 
         DML,
 

@@ -4,17 +4,16 @@ namespace ApexParser.Lexer
 {
     public class RegexMatcher
     {
-        private readonly Regex _regex;
+        private Regex Regex { get; }
 
         public RegexMatcher(string regex)
         {
-            _regex = new Regex($"^{regex}");
+            Regex = new Regex($"^{regex}");
         }
-
 
         public int Match(string text)
         {
-            var m = _regex.Match(text);
+            var m = Regex.Match(text);
             return m.Success ? m.Length : 0;
         }
     }

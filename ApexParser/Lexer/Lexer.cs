@@ -4,52 +4,54 @@ namespace ApexParser.Lexer
 {
     public class Lexer
     {
-        private readonly string _fileName;
-        private readonly TokenDefinition[] _tokenDefinitions;
-        private string _lineRemaining;
-
         public Lexer(string apexSourceCode)
         {
-            _tokenDefinitions = ApexTokenRegEx.GetTokenDefinitions();
-            _lineRemaining = apexSourceCode;
-            _fileName = "UnitTest";
+            TokenDefinitions = ApexTokenRegEx.GetTokenDefinitions();
+            LineRemaining = apexSourceCode;
+            FileName = "UnitTest";
         }
+
+        private string FileName { get; }
+
+        private TokenDefinition[] TokenDefinitions { get; }
+
+        private string LineRemaining { get; set; }
 
         public Result Next()
         {
-            if (_lineRemaining.Length == 0)
+            if (LineRemaining.Length == 0)
             {
                 return null;
             }
 
-            foreach (var def in _tokenDefinitions)
+            foreach (var def in TokenDefinitions)
             {
-                var matched = def.Matcher.Match(_lineRemaining);
+                var matched = def.Matcher.Match(LineRemaining);
                 if (matched > 0)
                 {
                     var newResult = new Result
                     {
                         TokenType = def.TokenType,
-                        TokenContent = _lineRemaining.Substring(0, matched)
+                        TokenContent = LineRemaining.Substring(0, matched)
                     };
 
-                    _lineRemaining = _lineRemaining.Substring(matched);
+                    LineRemaining = LineRemaining.Substring(matched);
                     return newResult;
                 }
             }
 
-            var lenth = _lineRemaining.Length;
+            var lenth = LineRemaining.Length;
 
             if (lenth > 50)
             {
-                PrintErrorMessage(_fileName, _lineRemaining.Substring(0, 1), _lineRemaining.Substring(0, 50));
+                PrintErrorMessage(FileName, LineRemaining.Substring(0, 1), LineRemaining.Substring(0, 50));
             }
             else
             {
-                PrintErrorMessage(_fileName, _lineRemaining.Substring(0, 1), _lineRemaining.Substring(0));
+                PrintErrorMessage(FileName, LineRemaining.Substring(0, 1), LineRemaining.Substring(0));
             }
 
-            _lineRemaining = _lineRemaining.Substring(1);
+            LineRemaining = LineRemaining.Substring(1);
 
             Console.ReadLine();
             return null;
