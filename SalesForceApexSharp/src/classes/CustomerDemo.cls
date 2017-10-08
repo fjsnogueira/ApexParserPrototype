@@ -1,40 +1,27 @@
-public with sharing class CustomerDemo
-{
-    public static void UpdateCustomerDemo(String email, String newPhoneNumber)
-    {
+public with sharing class CustomerDemo {
+    public static void UpdateCustomerDemo(String email, String newPhoneNumber) {
         CustomerManagement.CustomerDto vipCustomer;
         CustomerManagement.CustomerDao customerDao = new CustomerManagement.CustomerDao();
 
-        try
-        {
+        try {
             vipCustomer = customerDao.GetCustomerByEmail(email);
-        }
-        catch (CustomerManagement.CustomerRecordNotFoundException e)
-        {
+        } catch (CustomerManagement.CustomerRecordNotFoundException e) {
             // Logic to handle if no records are found
         }
 
-        try
-        {
+        try {
             vipCustomer.Phone = newPhoneNumber;
             customerDao.UpdateCustomer(vipCustomer);
-        }
-        catch (CustomerManagement.CustomerRecordNotFoundException e)
-        {
+        } catch (CustomerManagement.CustomerRecordNotFoundException e) {
             // Logic to handle if no records are found
-        }
-        catch (CustomerManagement.CustomerRecordUpdateException e)
-        {
+        } catch (CustomerManagement.CustomerRecordUpdateException e) {
             // Logic to handle if update fails
         }
 
-        try
-        {
+        try {
             vipCustomer = customerDao.GetCustomerByEmail(email);
             System.debug(vipCustomer.Phone);
-        }
-        catch (CustomerManagement.CustomerRecordNotFoundException e)
-        {
+        } catch (CustomerManagement.CustomerRecordNotFoundException e) {
             // Logic to handle if no records are found
         }
     }
