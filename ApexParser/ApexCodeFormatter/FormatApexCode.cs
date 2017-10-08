@@ -16,7 +16,6 @@ namespace ApexParser.ApexCodeFormatter
             var formatedApexCode = FormatApexCodeNoIndent(apexCode);
             var indentedApexCode = IndentApexCode(formatedApexCode);
             return indentedApexCode;
-
         }
 
 
