@@ -4,6 +4,7 @@ public with sharing class ClassTwo {
     }
 
     public ClassTwo(String vin) { // another constructor
+    // with a lot of misplaced comments
     }
 
     /*
