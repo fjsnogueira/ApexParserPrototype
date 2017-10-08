@@ -57,4 +57,12 @@ public with sharing class ForIfWhile
             count++ ;
         }
     }
+
+    public void SingleLineIf()
+    {
+        Integer i = 5;
+        if (i == 1) System.debug('IfOne');
+        else if (i != 1) System.debug('IfOne');
+        else System.debug('ElseOne');
+    }
 }
