@@ -25,19 +25,37 @@ namespace ApexParser.ApexCodeFormatter
             List<string> apexCodeList = new List<string>();
 
             var apexTokens = ApexLexer.GetApexTokens(apexCode);
+            var multiLineCommentLevel = 0;
+            var lastValidCommentPosition = 0;
+            var validCommentPositions = new[]
+            {
+                TokenType.CloseCurlyBrackets,
+                TokenType.StatementTerminator,
+                TokenType.AccessModifier,
+                TokenType.KwVoid
+            };
 
             string apexLine = string.Empty;
             foreach (var apexToken in apexTokens)
             {
+                // Reposition the comment at the start of the last statement
+                if (apexToken.TokenType == TokenType.CommentLine && multiLineCommentLevel == 0)
+                {
+                    apexCodeList.Insert(lastValidCommentPosition, apexToken.Content.Trim());
+                    lastValidCommentPosition++;
+                    apexCodeList.Add(apexLine.Trim());
+                    apexLine = string.Empty;
+                }
+
                 // If we have a newline, start on new line
-                if (apexToken.TokenType == TokenType.Return)
+                else if (apexToken.TokenType == TokenType.Return)
                 {
                     apexCodeList.Add(apexLine.Trim());
                     apexLine = string.Empty;
                 }
 
                 // If we have a ';' then next line should be new
-                else if (apexToken.TokenType == TokenType.StatmentTerminator)
+                else if (apexToken.TokenType == TokenType.StatementTerminator)
                 {
                     apexLine = apexLine + apexToken.Content;
                     apexCodeList.Add(apexLine.Trim());
@@ -56,6 +74,22 @@ namespace ApexParser.ApexCodeFormatter
                 {
                     apexLine = apexLine + apexToken.Content;
                 }
+
+                // Save the last statement starting position
+                if (validCommentPositions.Contains(apexToken.TokenType))
+                {
+                    lastValidCommentPosition = apexCodeList.Count;
+                }
+
+                // Compute the multi-line comment nesting level
+                else if (apexToken.TokenType == TokenType.CommentStart)
+                {
+                    multiLineCommentLevel++;
+                }
+                else if (apexToken.TokenType == TokenType.CommentEnd)
+                {
+                    multiLineCommentLevel--;
+                }
             }
 
             List<string> newApexCodeList = new List<string>();
@@ -72,7 +106,8 @@ namespace ApexParser.ApexCodeFormatter
 
         public static string IndentApexCode(List<string> apexCodeList)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
+            var needExtraLine = false;
             int padding = 0;
 
             foreach (var apexCode in apexCodeList)
@@ -80,6 +115,12 @@ namespace ApexParser.ApexCodeFormatter
                 if (apexCode.Trim() == "}")
                 {
                     padding = padding - IndentSize;
+                    needExtraLine = true;
+                }
+                else if (needExtraLine)
+                {
+                    sb.AppendLine();
+                    needExtraLine = false;
                 }
 
                 sb.AppendLine(new string(' ', padding) + apexCode);

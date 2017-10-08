@@ -85,7 +85,7 @@
                 new TokenDefinition(@"(?i)@\s*InvocableVariable", TokenType.Attrubute),
                 new TokenDefinition(@"(?i)@\s*ReadOnly", TokenType.Attrubute),
 
-                new TokenDefinition(@";", TokenType.StatmentTerminator),
+                new TokenDefinition(@";", TokenType.StatementTerminator),
 
                 ////new TokenDefinition(@"<(.*?)>", TokenType.ClassNameGeneric),
                 ////new TokenDefinition(@"\bList<\b(.*?)>", TokenType.ClassNameGeneric),

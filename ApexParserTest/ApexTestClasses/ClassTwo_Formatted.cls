@@ -4,6 +4,7 @@ public with sharing class ClassTwo
      {
           System.debug('Test');
      }
+
      public ClassTwo(String vin)
      {
      }

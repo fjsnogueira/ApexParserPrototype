@@ -128,6 +128,58 @@ namespace ApexParserTest.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to public with sharing class ClassTwo {
+        ///    public ClassTwo() { // constructor
+        ///        System.debug(&apos;Test&apos;);
+        ///    }
+        ///
+        ///    public ClassTwo(String vin) { // another constructor
+        ///    }
+        ///
+        ///    /*
+        ///     * This  is a comment line one
+        ///     * This is a comment // line two
+        ///     */
+        ///    public void Hello() { System.debug(&apos;Hello&apos;); }
+        ///}.
+        /// </summary>
+        internal static string ClassWithComments {
+            get {
+                return ResourceManager.GetString("ClassWithComments", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to public with sharing class ClassTwo
+        ///{
+        ///    public ClassTwo()
+        ///    {
+        ///         // constructor
+        ///         System.debug(&apos;Test&apos;);
+        ///    }
+        ///
+        ///    public ClassTwo(String vin)
+        ///    {
+        ///         // another constructor
+        ///    }
+        ///
+        ///    /*
+        ///     * This  is a comment line one
+        ///     * This is a comment // line two
+        ///     */
+        ///    public void Hello()
+        ///    {
+        ///         System.debug(&apos;Hello&apos;);
+        ///   	}
+        ///}.
+        /// </summary>
+        internal static string ClassWithComments_Formatted {
+            get {
+                return ResourceManager.GetString("ClassWithComments_Formatted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to public class Demo
         ///{
         ///    public static void RunContactDemo()

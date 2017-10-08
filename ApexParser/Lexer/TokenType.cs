@@ -24,7 +24,7 @@
         Word,
         Space,
         Anything,
-        StatmentTerminator,
+        StatementTerminator,
         Top,
         End,
         TestAttrubute,
