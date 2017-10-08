@@ -12,9 +12,9 @@ namespace ApexParser
     {
         public static void Main(string[] args)
         {
-            string myDevdir = @"C:\DevSharp";
-            string apexCode = File.ReadAllText(myDevdir + @"\ApexParser\SalesForceApexSharp\src\classes\ClassDemo.cls");
-
+            // string myDevdir = @"C:\DevSharp";
+            // string apexCode = File.ReadAllText(myDevdir + @"\ApexParser\SalesForceApexSharp\src\classes\ClassDemo.cls");
+            string apexCode = File.ReadAllText(@"C:\Dev\nadev12d\src\classes\TestDataFactory.cls");
             var apexCodeList = FormatApexCode.GetFormatedApexCode(apexCode);
             Console.WriteLine(apexCodeList);
             Console.WriteLine("Done");

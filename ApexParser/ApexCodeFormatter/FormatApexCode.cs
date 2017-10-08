@@ -27,6 +27,7 @@ namespace ApexParser.ApexCodeFormatter
             var apexTokens = ApexLexer.GetApexTokens(apexCode);
             var multiLineCommentLevel = 0;
             var lastValidCommentPosition = 0;
+
             var validCommentPositions = new[]
             {
                 TokenType.CloseCurlyBrackets,
