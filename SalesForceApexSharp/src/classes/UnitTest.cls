@@ -1,5 +1,6 @@
 @isTest public class UnitTest
 {
+ @TestSetup
  public void Setup()
 {
 System.Debug('One Time Setup Got Called');

@@ -1,3 +1,4 @@
-public abstract class ClassBaseDemo {
+public abstract class ClassAbstract
+{
     public abstract void MethodThree();
 }

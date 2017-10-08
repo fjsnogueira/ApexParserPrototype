@@ -1,22 +1,24 @@
 //::    ApexClassDeclarationSyntax
-public without sharing class FieldPropertyExpression {
+public without sharing class FieldPropertyExpression
+{
 //::    ApexMethodDeclarationSyntax
-public void MethodOne() {
+    public void MethodOne()
+    {
 //::    ApexFieldDeclarationSyntax
-DateTime dateTimeEmpty;
+        DateTime dateTimeEmpty;
 //::    ApexExpressionStatementSyntax
-dateTimeEmpty = DateTime.now();
+        dateTimeEmpty = DateTime.now();
 //::    ApexFieldDeclarationSyntax
-DateTime dateTimeInitilized = DateTime.now();
+        DateTime dateTimeInitilized = DateTime.now();
 //::    ApexFieldDeclarationSyntax
-List<DateTime> dateTimeList = new List<DateTime>();
+        List<DateTime> dateTimeList = new List<DateTime>();
 //::    ApexFieldDeclarationSyntax
-DateTime[] dateTimeArrary = new DateTime[5];
+        DateTime[] dateTimeArrary = new DateTime[5];
 //::    ApexExpressionStatementSyntax
-System.debug('Hello World');
-    String Name;
-    Name = 'Jay';
+        System.debug('Hello World');
+        String Name;
+        Name = 'Jay';
 //::    CloseBrace
-}
+    }
 //::    CloseBrace
 }
