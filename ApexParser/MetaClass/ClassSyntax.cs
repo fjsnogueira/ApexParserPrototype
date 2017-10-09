@@ -6,16 +6,13 @@ using System.Threading.Tasks;
 
 namespace ApexParser.MetaClass
 {
-    public class ClassSyntax : BaseSyntax
+    public class ClassSyntax : ClassMemberSyntax
     {
-        public ClassSyntax()
+        public ClassSyntax(ClassMemberSyntax heading = null)
+            : base(heading)
         {
             Kind = SyntaxType.Class;
         }
-
-        public List<string> Attributes { get; set; } = new List<string>();
-
-        public List<string> Modifiers { get; set; } = new List<string>();
 
         public string Identifier { get; set; }
 

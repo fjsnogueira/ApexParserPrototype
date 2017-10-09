@@ -167,23 +167,41 @@ namespace ApexParser.Parser
             from closeBrace in Parse.Char('}')
             select "{" + string.Join(string.Empty, contents) + "}";
 
-        // example: class Program { void main() {} }
-        protected internal virtual Parser<ClassSyntax> ClassDeclaration =>
-            from comments in CommentParser.AnyComment.Many()
+        // examples: /* this is a member */ @isTest public
+        protected internal virtual Parser<ClassMemberSyntax> ClassMemberHeading =>
+            from comments in CommentParser.AnyComment.Token().Many()
             from annotations in Annotation.Many()
             from modifiers in Modifier.Many()
+            select new ClassMemberSyntax
+            {
+                CodeComments = comments.ToList(),
+                Attributes = annotations.ToList(),
+                Modifiers = modifiers.ToList()
+            };
+
+        // example: @TestFixture public static class Program { static void main() {} }
+        protected internal virtual Parser<ClassSyntax> ClassDeclaration =>
+            from heading in ClassMemberHeading
             from @class in Parse.String(ApexKeywords.Class).Token()
+            from classBody in ClassDeclarationBody
+            select new ClassSyntax(heading)
+            {
+                Identifier = classBody.Identifier,
+                Methods = classBody.Methods
+            };
+
+        // example: Program { void main() {} }
+        protected internal virtual Parser<ClassSyntax> ClassDeclarationBody =>
             from className in Identifier
             from openBrace in Parse.Char('{').Token()
             from methods in MethodDeclaration.Many()
             from closeBrace in Parse.Char('}').Token()
-            select new ClassSyntax
+            select new ClassSyntax()
             {
                 Identifier = className,
-                CodeComments = comments.ToList(),
-                Attributes = annotations.ToList(),
-                Modifiers = modifiers.ToList(),
                 Methods = methods.ToList()
             };
+
+        ////protected internal virtual Parser<BaseSyntax> ClassMemberDeclaration =>
     }
 }

@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace ApexParser.MetaClass
 {
-    public class PropertySyntax : BaseSyntax
+    public class PropertySyntax : ClassMemberSyntax
     {
-        public PropertySyntax(IEnumerable<Tuple<string, string>> gettersOrSetters)
+        public PropertySyntax(IEnumerable<Tuple<string, string>> gettersOrSetters, ClassMemberSyntax heading = null)
+            : base(heading)
         {
             Kind = SyntaxType.Property;
 

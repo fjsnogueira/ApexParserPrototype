@@ -399,6 +399,51 @@ namespace ApexParserTest.Parser
         }
 
         [Test]
+        public void ClassMemberHeadingConstistsOfCommentsAttributesAndModifiers()
+        {
+            var cm = Apex.ClassMemberHeading.Parse(" /* test */ ");
+            Assert.AreEqual(1, cm.CodeComments.Count);
+            Assert.AreEqual(" test ", cm.CodeComments[0]);
+            Assert.False(cm.Attributes.Any());
+            Assert.False(cm.Modifiers.Any());
+
+            cm = Apex.ClassMemberHeading.Parse(" public static ");
+            Assert.AreEqual(2, cm.Modifiers.Count);
+            Assert.AreEqual("public", cm.Modifiers[0]);
+            Assert.AreEqual("static", cm.Modifiers[1]);
+            Assert.False(cm.CodeComments.Any());
+            Assert.False(cm.Attributes.Any());
+
+            cm = Apex.ClassMemberHeading.Parse(" @isTest ");
+            Assert.AreEqual(1, cm.Attributes.Count);
+            Assert.AreEqual("isTest", cm.Attributes[0]);
+            Assert.False(cm.CodeComments.Any());
+            Assert.False(cm.Modifiers.Any());
+
+            cm = Apex.ClassMemberHeading.Parse(" /* my class */ @isTest override ");
+            Assert.AreEqual(1, cm.Attributes.Count);
+            Assert.AreEqual("isTest", cm.Attributes[0]);
+            Assert.AreEqual(1, cm.CodeComments.Count);
+            Assert.AreEqual(" my class ", cm.CodeComments[0]);
+            Assert.AreEqual(1, cm.Modifiers.Count);
+            Assert.AreEqual("override", cm.Modifiers[0]);
+        }
+
+        [Test]
+        public void ClassDeclarationBodyCanBeEmpty()
+        {
+            var cd = Apex.ClassDeclarationBody.Parse(" Test {}");
+            Assert.False(cd.Attributes.Any());
+            Assert.False(cd.Methods.Any());
+            Assert.False(cd.Modifiers.Any());
+            Assert.AreEqual("Test", cd.Identifier);
+
+            // incomplete class declarations
+            Assert.Throws<ParseException>(() => Apex.ClassDeclarationBody.Parse(" Test {"));
+            Assert.Throws<ParseException>(() => Apex.ClassDeclarationBody.Parse(" {}"));
+        }
+
+        [Test]
         public void ClassDeclarationCanBeEmpty()
         {
             var cd = Apex.ClassDeclaration.Parse(" class Test {}");
@@ -425,6 +470,23 @@ namespace ApexParserTest.Parser
 
             // bad class declarations
             Assert.Throws<ParseException>(() => Apex.ClassDeclaration.Parse("@class Test {"));
+        }
+
+        [Test]
+        public void ClassDeclarationBodyCanDeclareMethods()
+        {
+            var cd = Apex.ClassDeclarationBody.Parse(" Program { void main() {} }");
+            Assert.True(cd.Methods.Any());
+            Assert.AreEqual("Program", cd.Identifier);
+
+            var md = cd.Methods.Single();
+            Assert.AreEqual("void", md.ReturnType.Identifier);
+            Assert.AreEqual("main", md.Identifier);
+            Assert.False(md.MethodParameters.Any());
+
+            // class declarations with bad methods
+            Assert.Throws<ParseException>(() => Apex.ClassDeclarationBody.Parse(" Test { void Main }"));
+            Assert.Throws<ParseException>(() => Apex.ClassDeclarationBody.Parse(" Apex { int main() }"));
         }
 
         [Test]

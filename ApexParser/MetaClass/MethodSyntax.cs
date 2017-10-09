@@ -3,16 +3,13 @@ using ApexParser.Lexer;
 
 namespace ApexParser.MetaClass
 {
-    public class MethodSyntax : BaseSyntax
+    public class MethodSyntax : ClassMemberSyntax
     {
-        public MethodSyntax()
+        public MethodSyntax(ClassMemberSyntax heading = null)
+            : base(heading)
         {
             Kind = SyntaxType.Method;
         }
-
-        public List<string> Attributes { get; set; } = new List<string>();
-
-        public List<string> Modifiers { get; set; } = new List<string>();
 
         public TypeSyntax ReturnType { get; set; }
 
