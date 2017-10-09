@@ -228,6 +228,18 @@ namespace ApexParserTest.Parser
         }
 
         [Test]
+        public void BlockSupportsNestedBlocks()
+        {
+            Assert.AreEqual("{123}", Apex.Block.Parse("{123}"));
+            Assert.AreEqual("{ break; }", Apex.Block.Parse("{ break; }"));
+            Assert.AreEqual("{ while() { } }", Apex.Block.Parse("{ while() { } }"));
+
+            // bad input
+            Assert.Throws<ParseException>(() => Apex.Block.End().Parse("{}}"));
+            Assert.Throws<ParseException>(() => Apex.Block.Parse("{"));
+        }
+
+        [Test]
         public void MethodDeclarationIsAMethodSignatureWithABlock()
         {
             // parameterless method
@@ -295,7 +307,55 @@ namespace ApexParserTest.Parser
             // invalid input
             Assert.Throws<ParseException>(() => Apex.MethodDeclaration.Parse("void Test {}"));
             Assert.Throws<ParseException>(() => Apex.MethodDeclaration.Parse("void AnotherTest()() {}"));
-            Assert.Throws<ParseException>(() => Apex.MethodDeclaration.Parse("void() {}"));
+        }
+
+        [Test]
+        public void ConstructorDeclarationIsAMethodNamedTheSameAsItsClass()
+        {
+            // parameterless constructor
+            var md = Apex.MethodDeclaration.Parse("public Disposable() {}");
+            Assert.False(md.Attributes.Any());
+            Assert.AreEqual(1, md.Modifiers.Count);
+            Assert.AreEqual("public", md.Modifiers[0]);
+            Assert.False(md.MethodParameters.Any());
+            Assert.AreEqual("Disposable", md.ReturnType.Identifier);
+            Assert.AreEqual("Disposable", md.Identifier);
+
+            // constructor with parameters
+            md = Apex.MethodDeclaration.Parse(@"
+            MyService( String name, Boolean newLine )
+            {
+            } ");
+
+            Assert.False(md.Attributes.Any());
+            Assert.False(md.Modifiers.Any());
+            Assert.AreEqual(2, md.MethodParameters.Count);
+            Assert.AreEqual("MyService", md.ReturnType.Identifier);
+            Assert.AreEqual("MyService", md.Identifier);
+
+            var mp = md.MethodParameters;
+            Assert.AreEqual(2, mp.Count);
+
+            var pd = mp[0];
+            Assert.AreEqual("String", pd.Type.Identifier);
+            Assert.AreEqual("name", pd.Identifier);
+
+            pd = mp[1];
+            Assert.AreEqual("Boolean", pd.Type.Identifier);
+            Assert.AreEqual("newLine", pd.Identifier);
+
+            // a constructor with annotation
+            md = Apex.MethodDeclaration.Parse("@isTest SampleClass() {}");
+            Assert.AreEqual(1, md.Attributes.Count);
+            Assert.AreEqual("isTest", md.Attributes[0]);
+            Assert.False(md.Modifiers.Any());
+            Assert.False(md.MethodParameters.Any());
+            Assert.AreEqual("SampleClass", md.ReturnType.Identifier);
+            Assert.AreEqual("SampleClass", md.Identifier);
+
+            // invalid input
+            Assert.Throws<ParseException>(() => Apex.MethodDeclaration.Parse("public Test {}"));
+            Assert.Throws<ParseException>(() => Apex.MethodDeclaration.Parse("static AnotherTest()() {}"));
         }
 
         [Test]

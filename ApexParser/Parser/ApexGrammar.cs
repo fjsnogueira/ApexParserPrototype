@@ -112,25 +112,26 @@ namespace ApexParser.Parser
             from annotations in Annotation.Many()
             from modifiers in Modifier.Many()
             from returnType in TypeReference
-            from methodName in Identifier
+            from methodName in Identifier.Optional()
             from parameters in MethodParameters
-            from openBrace in Parse.Char('{').Token()
-            from methodBody in MethodBody
-            from closeBrace in Parse.Char('}').Token()
+            from methodBody in Block.Token()
             select new MethodSyntax
             {
-                Identifier = methodName,
+                Identifier = methodName.GetOrElse(returnType.Identifier),
                 CodeComments = comments.ToList(),
                 Attributes = annotations.ToList(),
                 Modifiers = modifiers.ToList(),
                 ReturnType = returnType,
                 MethodParameters = parameters,
-                CodeInsideMethod = methodBody.Trim()
+                CodeInsideMethod = methodBody.Substring(1, methodBody.Length - 2).Trim()
             };
 
-        // dummy parser for the method body
-        protected internal virtual Parser<string> MethodBody =>
-            Parse.CharExcept('}').Many().Text();
+        // dummy parser for the block with curly brace matching support
+        protected internal virtual Parser<string> Block =>
+            from openBrace in Parse.Char('{')
+            from contents in Parse.CharExcept("{}").Many().Text().Or(Block).Many()
+            from closeBrace in Parse.Char('}')
+            select "{" + string.Join(string.Empty, contents) + "}";
 
         // example: class Program { void main() {} }
         protected internal virtual Parser<ClassSyntax> ClassDeclaration =>
