@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ApexParser.Lexer;
 
@@ -22,7 +23,7 @@ namespace ApexParser.ApexCodeFormatter
             TokenType.KwVoid
         };
 
-        public static string GetFormatedApexCode(string apexCode)
+        public static string GetFormattedApexCode(string apexCode)
         {
             var formatedApexCode = FormatApexCodeNoIndent(apexCode);
             var indentedApexCode = IndentApexCode(formatedApexCode);
@@ -169,13 +170,9 @@ namespace ApexParser.ApexCodeFormatter
             return newApexCodeList;
         }
 
-        private static bool IsEmptyGetterOrSetter(string line)
-        {
-            line = line.Trim();
-
-            return line == "get;" || line == "set;" ||
-                line == "get; set;" || line == "set; get;";
-        }
+        // Detects empty getters and setters in any order
+        private static bool IsEmptyGetterOrSetter(string line) =>
+            Regex.IsMatch(line, @"^((get|set)\s*\;\s*)+$");
 
         public static string IndentApexCode(List<string> apexCodeList)
         {

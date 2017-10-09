@@ -97,24 +97,14 @@
     <None Include="ApexTestClasses\ClassOne.cls" />
     <None Include="ApexTestClasses\ClassTwo.cls" />
     <None Include="ApexTestClasses\Demo.cls" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="ApexTestClasses\ClassOne_Formatted.cls" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="ApexTestClasses\ClassTwo_Formatted.cls" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="ApexTestClasses\ClassWithComments.cls" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="ApexTestClasses\ClassWithComments_Formatted.cls" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="ApexTestClasses\FormatDemo.cls" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="ApexTestClasses\FormatDemo_Formatted.cls" />
+    <None Include="ApexTestClasses\CustomerDto.cls" />
+    <None Include="ApexTestClasses\CustomerDto_Formatted.cls" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

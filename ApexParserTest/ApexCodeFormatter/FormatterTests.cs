@@ -9,11 +9,11 @@ namespace ApexParserTest.ApexCodeFormatter
     public class FormatterTests
     {
         private void Validate(string source, string expected) =>
-            Assert.AreEqual(expected, GetFormatedApexCode(source));
+            Assert.AreEqual(expected, GetFormattedApexCode(source));
 
         public void ValidateLineByLine(string source, string expected)
         {
-            var formatted = GetFormatedApexCode(source);
+            var formatted = GetFormattedApexCode(source);
             var formattedList = formatted.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
             var expectedList = expected.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
 
@@ -72,5 +72,9 @@ namespace ApexParserTest.ApexCodeFormatter
         [Test]
         public void FormatDemoIsFormatted() =>
             ValidateLineByLine(FormatDemo, FormatDemo_Formatted);
+
+        [Test]
+        public void CustomerDtoIsFormatted() =>
+            ValidateLineByLine(CustomerDto, CustomerDto_Formatted);
     }
 }

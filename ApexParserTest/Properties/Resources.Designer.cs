@@ -153,16 +153,16 @@ namespace ApexParserTest.Properties {
         /// <summary>
         ///   Looks up a localized string similar to public with sharing class ClassTwo
         ///{
-        ///     // constructor
         ///     public ClassTwo()
         ///     {
+        ///          // constructor
         ///          System.debug(&apos;Test&apos;);
         ///     }
         ///
-        ///     // another constructor
-        ///     // with a lot of misplaced comments
         ///     public ClassTwo(String vin)
         ///     {
+        ///          // another constructor
+        ///          // with a lot of misplaced comments
         ///     }
         ///
         ///     /*
@@ -179,6 +179,44 @@ namespace ApexParserTest.Properties {
         internal static string ClassWithComments_Formatted {
             get {
                 return ResourceManager.GetString("ClassWithComments_Formatted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to public class CustomerDto
+        ///{
+        ///    public String make {get;set;}
+        ///    public String year {get;set;}
+        ///    public CustomerDto.User user {get;set;}
+        ///
+        ///    public class User {
+        ///        public string userName {get;set;}
+        ///    }
+        ///}.
+        /// </summary>
+        internal static string CustomerDto {
+            get {
+                return ResourceManager.GetString("CustomerDto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to public class CustomerDto
+        ///{
+        ///     public String make { get;set; }
+        ///     public String year { get;set; }
+        ///     public CustomerDto.User user { get;set; }
+        ///
+        ///     public class User
+        ///     {
+        ///          public string userName { get;set; }
+        ///     }
+        ///}
+        ///.
+        /// </summary>
+        internal static string CustomerDto_Formatted {
+            get {
+                return ResourceManager.GetString("CustomerDto_Formatted", resourceCulture);
             }
         }
         
@@ -210,7 +248,7 @@ namespace ApexParserTest.Properties {
         ///* This  is a comment line one
         ///* This is a comment // line two
         ///*/
-        ///public with sharing class FormatDemoInput
+        ///public with sharing class FormatDemo
         ///{
         ///    public Integer
         ///        dateOfBirth
@@ -240,20 +278,16 @@ namespace ApexParserTest.Properties {
         ///*/
         ///public with sharing class FormatDemo
         ///{
-        ///    public Integer dateOfBirth { get; set; }
-        ///    public void ForLoopTest()
-        ///    {
-        ///        for (Integer i = 0; i &lt; 10; i++)
-        ///        {
-        ///            // This is a middle line comment
-        ///            List&lt;Contact&gt; contacts =
-        ///            [
-        ///            	SELECT Name, Email 
-        ///            	From Contact Where 
-        ///            	Name = &apos;Jay&apos;
-        ///            ];
-        ///        }
-        ///    }
+        ///     public Integer dateOfBirth { get; set; }
+        ///
+        ///     public void ForLoopTest()
+        ///     {
+        ///          for (Integer i = 0; i &lt; 10; i++)
+        ///          {
+        ///               // This is a middle line comment
+        ///               List&lt;Contact&gt; contacts = [ SELECT Name, Email From Contact Where Name = &apos;Jay&apos; ];
+        ///          }
+        ///     }
         ///}
         ///.
         /// </summary>
