@@ -159,7 +159,7 @@ namespace ApexParserTest.Parser
         [Test(Description = @"\ApexParser\SalesForceApexSharp\src\classes\Demo.cls")]
         public void DemoIsParsed()
         {
-            var cd = Apex.ClassDeclaration.Parse(Resources.Demo);
+            var cd = Apex.ClassDeclaration.Parse(Demo);
             Assert.AreEqual("Demo", cd.Identifier);
             Assert.AreEqual(1, cd.Methods.Count);
 
@@ -194,7 +194,7 @@ namespace ApexParserTest.Parser
                 }", md.CodeInsideMethod);
         }
 
-        [Test]
+        [Test(Description = @"\ApexParser\SalesForceApexSharp\src\classes\CustomerDto.cls")]
         public void CustomerDtoIsParsed()
         {
             ParseAndValidate(CustomerDto);
