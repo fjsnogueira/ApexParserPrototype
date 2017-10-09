@@ -1,6 +1,6 @@
 ﻿namespace ApexParser.MetaClass
 {
-    public class ParameterSyntax
+    public class ParameterSyntax : BaseSyntax
     {
         public ParameterSyntax(string type, string identifier)
             : this(new TypeSyntax(type), identifier)
@@ -11,6 +11,7 @@
         {
             Type = type;
             Identifier = identifier;
+            Kind = SyntaxType.MethodParameter;
         }
 
         public TypeSyntax Type { get; set; }

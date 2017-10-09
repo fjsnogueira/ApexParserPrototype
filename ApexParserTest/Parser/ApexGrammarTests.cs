@@ -359,6 +359,46 @@ namespace ApexParserTest.Parser
         }
 
         [Test]
+        public void GetterOrSetterCanBeEmpty()
+        {
+            var get = Apex.GetterOrSetter.Parse(" get ; ");
+            Assert.AreEqual("get", get.Item1);
+            Assert.AreEqual(";", get.Item2);
+
+            var set = Apex.GetterOrSetter.Parse(" set ; ");
+            Assert.AreEqual("set", set.Item1);
+            Assert.AreEqual(";", set.Item2);
+        }
+
+        [Test]
+        public void GetterOrSetterCanHaveBlocks()
+        {
+            var get = Apex.GetterOrSetter.Parse(" get { return myProperty; } ");
+            Assert.AreEqual("get", get.Item1);
+            Assert.AreEqual("return myProperty;", get.Item2);
+
+            var set = Apex.GetterOrSetter.Parse(" set { myProperty = value; while(true) { value++; } } ");
+            Assert.AreEqual("set", set.Item1);
+            Assert.AreEqual("myProperty = value; while(true) { value++; }", set.Item2);
+        }
+
+        [Test]
+        public void PropertyHasTypeNameGettersAndOrSetters()
+        {
+            var prop = Apex.PropertyDeclaration.Parse(" int x { get; }");
+            Assert.AreEqual("int", prop.Type.Identifier);
+            Assert.AreEqual("x", prop.Identifier);
+            Assert.AreEqual(null, prop.SetterCode);
+            Assert.AreEqual(";", prop.GetterCode);
+
+            prop = Apex.PropertyDeclaration.Parse(" String Version { set { version = value; } }");
+            Assert.AreEqual("String", prop.Type.Identifier);
+            Assert.AreEqual("Version", prop.Identifier);
+            Assert.AreEqual(null, prop.GetterCode);
+            Assert.AreEqual("version = value;", prop.SetterCode);
+        }
+
+        [Test]
         public void ClassDeclarationCanBeEmpty()
         {
             var cd = Apex.ClassDeclaration.Parse(" class Test {}");

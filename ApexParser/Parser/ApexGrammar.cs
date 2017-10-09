@@ -123,7 +123,41 @@ namespace ApexParser.Parser
                 Modifiers = modifiers.ToList(),
                 ReturnType = returnType,
                 MethodParameters = parameters,
-                CodeInsideMethod = methodBody.Substring(1, methodBody.Length - 2).Trim()
+                CodeInsideMethod = StripOuterBlockBraces(methodBody)
+            };
+
+        // strips the outer curly braces from the method block
+        private string StripOuterBlockBraces(string blockBody)
+        {
+            var result = blockBody.Trim();
+            if (result.StartsWith("{") && result.EndsWith("}"))
+            {
+                result = result.Substring(1, result.Length - 2).Trim();
+            }
+
+            return result;
+        }
+
+        // examples: get; set; get { ... }
+        protected internal virtual Parser<Tuple<string, string>> GetterOrSetter =>
+            from getOrSet in Parse.String("get").Or(Parse.String("set")).Token().Text()
+            from block in Parse.String(";").Token().Text().Or(Block)
+            select Tuple.Create(getOrSet, StripOuterBlockBraces(block));
+
+        // example: public String name { get; set; }
+        protected internal virtual Parser<PropertySyntax> PropertyDeclaration =>
+            from comments in CommentParser.AnyComment.Many()
+            from annotations in Annotation.Many()
+            from modifiers in Modifier.Many()
+            from propertyType in TypeReference
+            from propertyName in Identifier
+            from openBrace in Parse.Char('{').Token()
+            from getterOrSetter in GetterOrSetter.Many()
+            from closeBrace in Parse.Char('}').Token()
+            select new PropertySyntax(getterOrSetter)
+            {
+                Type = propertyType,
+                Identifier = propertyName
             };
 
         // dummy parser for the block with curly brace matching support

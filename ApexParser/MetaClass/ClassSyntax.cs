@@ -20,5 +20,7 @@ namespace ApexParser.MetaClass
         public string Identifier { get; set; }
 
         public List<MethodSyntax> Methods { get; set; } = new List<MethodSyntax>();
+
+        public List<PropertySyntax> Properties { get; set; } = new List<PropertySyntax>();
     }
 }
