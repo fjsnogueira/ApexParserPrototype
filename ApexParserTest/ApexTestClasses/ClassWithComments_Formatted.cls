@@ -1,15 +1,15 @@
 public with sharing class ClassTwo
 {
-     // constructor
      public ClassTwo()
      {
+          // constructor
           System.debug('Test');
      }
 
-     // another constructor
-     // with a lot of misplaced comments
      public ClassTwo(String vin)
      {
+          // another constructor
+          // with a lot of misplaced comments
      }
 
      /*

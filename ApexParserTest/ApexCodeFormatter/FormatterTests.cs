@@ -1,57 +1,76 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ApexParser.ApexCodeFormatter;
-using ApexParserTest.Properties;
 using NUnit.Framework;
 using static ApexParser.ApexCodeFormatter.FormatApexCode;
+using static ApexParserTest.Properties.Resources;
 
 namespace ApexParserTest.ApexCodeFormatter
 {
     [TestFixture]
     public class FormatterTests
     {
-        [Test]
-        public void ApexCodeFormatterFormatsClassOne()
+        private void Validate(string source, string expected) =>
+            Assert.AreEqual(expected, GetFormatedApexCode(source));
+
+        public void ValidateLineByLine(string source, string expected)
         {
-            var formatted = GetFormatedApexCode(Resources.ClassOne);
-            Assert.AreEqual(Resources.ClassOne_Formatted, formatted);
-        }
+            var formatted = GetFormatedApexCode(source);
+            var formattedList = formatted.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+            var expectedList = expected.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
 
-        [Test]
-        public void ApexCodeFormatterFormatsClassTwo()
-        {
-            var formatted = GetFormatedApexCode(Resources.ClassTwo);
-            Assert.AreEqual(Resources.ClassTwo_Formatted, formatted);
-        }
+            Assert.AreEqual(expectedList.Length, formattedList.Length);
 
-        [Test]
-        public void ApexCodeFormatterFormatsClassWithComments()
-        {
-            var formatted = GetFormatedApexCode(Resources.ClassWithComments);
-            Assert.AreEqual(Resources.ClassWithComments_Formatted, formatted);
-        }
-
-        [Test]
-        public void FormaterTestUsingExistingClass()
-        {
-            string apexCodeInput = File.ReadAllText(@"C:\DevSharp\ApexParser\SalesForceApexSharp\src\classes\FormatDemoInput.cls");
-            string apexExpectedCode = File.ReadAllText(@"C:\DevSharp\ApexParser\SalesForceApexSharp\src\classes\FormatDemoOutPut.cls");
-            var formatedApexCode = FormatApexCode.GetFormatedApexCode(apexCodeInput);
-
-            // Change the name of the class so Test does not Fail just because of ClassName
-            formatedApexCode = formatedApexCode.Replace("FormatDemoInput", "FormatDemoOutPut");
-
-            List<string> apexCodeInputList = formatedApexCode.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None).ToList();
-            List<string> apexExpectedCodeList = apexExpectedCode.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None).ToList();
-
-            for (int i = 0; i < apexExpectedCodeList.Count; i++)
+            for (int i = 0; i < expectedList.Length; i++)
             {
-                Assert.AreEqual(apexExpectedCodeList[i], apexCodeInputList[i]);
+                Assert.AreEqual(expectedList[i], formattedList[i]);
             }
         }
+
+        [Test]
+        public void ClassOneIsFormatted() =>
+            ValidateLineByLine(ClassOne, ClassOne_Formatted);
+
+        [Test]
+        public void ClassTwoIsFormatted() =>
+            ValidateLineByLine(ClassTwo, ClassTwo_Formatted);
+
+        [Test]
+        public void ClassWithCommentsIsFormatted() =>
+            ValidateLineByLine(ClassWithComments, ClassWithComments_Formatted);
+
+        [Test]
+        public void DuplicateSpacesAreReplacedWithSingleSpace() =>
+            ValidateLineByLine("class    Name", "class Name\n");
+
+        [Test]
+        public void ReturnInsideAStatementIsIgnored() =>
+            ValidateLineByLine("Integer\n x = 10;", "Integer x = 10;\n");
+
+        [Test]
+        public void ReturnInsideAStatementIsReplacedWithASpace() =>
+            ValidateLineByLine("Boolean\nflag = true;", "Boolean flag = true;\n");
+
+        [Test]
+        public void MultipleReturnsInsideAStatementBecomeSingleSpace() =>
+            ValidateLineByLine("Int\n\nx\n\n=y", "Int x =y\n");
+
+        [Test]
+        public void EmptyGetSetWithSemicolonsEndUpOnTheSameLine()
+        {
+            ValidateLineByLine("get;\nset;\n", "get; set;\n");
+            ValidateLineByLine("set;\nget;\n", "set; get;\n");
+            ValidateLineByLine("get;\n", "get;\n");
+        }
+
+        [Test]
+        public void EmptyGetSetInsideCurlyBracketsEndUpOnTheSameLine() =>
+            ValidateLineByLine("{\nget;\nset;\n}\n", "{ get; set; }\n");
+
+        [Test]
+        public void PropertyDefinitionWithEmptyGetSetInsideCurlyBracketsEndUpOnTheSameLine() =>
+            ValidateLineByLine("public\nstring\nName\n{\nget;\nset;\n}\n", "public string Name { get; set; }\n");
+
+        [Test]
+        public void FormatDemoIsFormatted() =>
+            ValidateLineByLine(FormatDemo, FormatDemo_Formatted);
     }
 }

@@ -134,6 +134,7 @@ namespace ApexParserTest.Properties {
         ///    }
         ///
         ///    public ClassTwo(String vin) { // another constructor
+        ///    // with a lot of misplaced comments
         ///    }
         ///
         ///    /*
@@ -152,26 +153,28 @@ namespace ApexParserTest.Properties {
         /// <summary>
         ///   Looks up a localized string similar to public with sharing class ClassTwo
         ///{
-        ///    public ClassTwo()
-        ///    {
-        ///         // constructor
-        ///         System.debug(&apos;Test&apos;);
-        ///    }
+        ///     // constructor
+        ///     public ClassTwo()
+        ///     {
+        ///          System.debug(&apos;Test&apos;);
+        ///     }
         ///
-        ///    public ClassTwo(String vin)
-        ///    {
-        ///         // another constructor
-        ///    }
+        ///     // another constructor
+        ///     // with a lot of misplaced comments
+        ///     public ClassTwo(String vin)
+        ///     {
+        ///     }
         ///
-        ///    /*
+        ///     /*
         ///     * This  is a comment line one
         ///     * This is a comment // line two
         ///     */
-        ///    public void Hello()
-        ///    {
-        ///         System.debug(&apos;Hello&apos;);
-        ///   	}
-        ///}.
+        ///     public void Hello()
+        ///     {
+        ///          System.debug(&apos;Hello&apos;);
+        ///     }
+        ///}
+        ///.
         /// </summary>
         internal static string ClassWithComments_Formatted {
             get {
@@ -199,6 +202,64 @@ namespace ApexParserTest.Properties {
         internal static string Demo {
             get {
                 return ResourceManager.GetString("Demo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /*
+        ///* This  is a comment line one
+        ///* This is a comment // line two
+        ///*/
+        ///public with sharing class FormatDemoInput
+        ///{
+        ///    public Integer
+        ///        dateOfBirth
+        ///            { get; set; }
+        ///    public void ForLoopTest() {
+        ///        for (Integer i = 0; i &lt; 10; i++) {
+        ///            List&lt;Contact&gt; contacts =
+        ///            [
+        ///                    SELECT Name, Email // This is a middle line comment
+        ///                    From Contact
+        ///                    Where Name = &apos;Jay&apos;
+        ///            ];
+        ///        }
+        ///    }
+        ///}.
+        /// </summary>
+        internal static string FormatDemo {
+            get {
+                return ResourceManager.GetString("FormatDemo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /*
+        ///* This  is a comment line one
+        ///* This is a comment // line two
+        ///*/
+        ///public with sharing class FormatDemo
+        ///{
+        ///    public Integer dateOfBirth { get; set; }
+        ///    public void ForLoopTest()
+        ///    {
+        ///        for (Integer i = 0; i &lt; 10; i++)
+        ///        {
+        ///            // This is a middle line comment
+        ///            List&lt;Contact&gt; contacts =
+        ///            [
+        ///            	SELECT Name, Email 
+        ///            	From Contact Where 
+        ///            	Name = &apos;Jay&apos;
+        ///            ];
+        ///        }
+        ///    }
+        ///}
+        ///.
+        /// </summary>
+        internal static string FormatDemo_Formatted {
+            get {
+                return ResourceManager.GetString("FormatDemo_Formatted", resourceCulture);
             }
         }
     }

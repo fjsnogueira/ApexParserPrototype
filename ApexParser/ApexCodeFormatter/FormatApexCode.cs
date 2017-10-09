@@ -13,6 +13,15 @@ namespace ApexParser.ApexCodeFormatter
     {
         public const int IndentSize = 5;
 
+        private static TokenType[] ValidCommentPositions { get; } = new[]
+        {
+            TokenType.OpenCurlyBrackets,
+            TokenType.CloseCurlyBrackets,
+            TokenType.StatementTerminator,
+            TokenType.AccessModifier,
+            TokenType.KwVoid
+        };
+
         public static string GetFormatedApexCode(string apexCode)
         {
             var formatedApexCode = FormatApexCodeNoIndent(apexCode);
@@ -26,15 +35,9 @@ namespace ApexParser.ApexCodeFormatter
 
             var apexTokens = ApexLexer.GetApexTokens(apexCode);
             var multiLineCommentLevel = 0;
+            var bracketNestingLevel = 0;
             var lastValidCommentPosition = 0;
-
-            var validCommentPositions = new[]
-            {
-                TokenType.CloseCurlyBrackets,
-                TokenType.StatementTerminator,
-                TokenType.AccessModifier,
-                TokenType.KwVoid
-            };
+            var lastTokenType = TokenType.Empty;
 
             string apexLine = string.Empty;
             foreach (var apexToken in apexTokens)
@@ -43,29 +46,55 @@ namespace ApexParser.ApexCodeFormatter
                 if (apexToken.TokenType == TokenType.CommentLine && multiLineCommentLevel == 0)
                 {
                     apexCodeList.Insert(lastValidCommentPosition, apexToken.Content.Trim());
+                    apexLine = apexLine.TrimEnd();
                     lastValidCommentPosition++;
+                }
+
+                // Replace the original newlines with a single space unless it's a multi-line comment
+                else if (apexToken.TokenType == TokenType.Return)
+                {
+                    if (multiLineCommentLevel == 0 && lastTokenType != TokenType.CommentEnd)
+                    {
+                        if (lastTokenType != TokenType.Space)
+                        {
+                            apexLine += " ";
+                        }
+
+                        lastTokenType = TokenType.Space;
+                        continue;
+                    }
+
                     apexCodeList.Add(apexLine.Trim());
                     apexLine = string.Empty;
                 }
 
-                // If we have a newline, start on new line
-                else if (apexToken.TokenType == TokenType.Return)
+                // Ignore duplicate spaces unless it's a multi-line comment
+                else if (apexToken.TokenType == TokenType.Space && multiLineCommentLevel == 0)
                 {
-                    apexCodeList.Add(apexLine.Trim());
-                    apexLine = string.Empty;
+                    // Replace multiple spaces with a single one
+                    if (lastTokenType != TokenType.Space)
+                    {
+                        apexLine += " ";
+                    }
+
+                    lastTokenType = apexToken.TokenType;
+                    continue;
                 }
 
                 // If we have a ';' then next line should be new
-                else if (apexToken.TokenType == TokenType.StatementTerminator)
+                else if (apexToken.TokenType == TokenType.StatementTerminator && bracketNestingLevel == 0)
                 {
                     apexLine = apexLine + apexToken.Content;
-                    apexCodeList.Add(apexLine.Trim());
-                    apexLine = string.Empty;
+
+                    if (lastTokenType != TokenType.KwGetSet)
+                    {
+                        apexCodeList.Add(apexLine.Trim());
+                        apexLine = string.Empty;
+                    }
                 }
 
                 // '{' and "}" should be on its own line
-                else if (apexToken.TokenType == TokenType.OpenCurlyBrackets ||
-                         apexToken.TokenType == TokenType.CloseCurlyBrackets)
+                else if (apexToken.TokenType == TokenType.OpenCurlyBrackets || apexToken.TokenType == TokenType.CloseCurlyBrackets)
                 {
                     apexCodeList.Add(apexLine.Trim());
                     apexCodeList.Add(apexToken.Content);
@@ -77,7 +106,7 @@ namespace ApexParser.ApexCodeFormatter
                 }
 
                 // Save the last statement starting position
-                if (validCommentPositions.Contains(apexToken.TokenType))
+                if (ValidCommentPositions.Contains(apexToken.TokenType))
                 {
                     lastValidCommentPosition = apexCodeList.Count;
                 }
@@ -91,25 +120,68 @@ namespace ApexParser.ApexCodeFormatter
                 {
                     multiLineCommentLevel--;
                 }
+
+                // Compute the bracket nesting level
+                else if (apexToken.TokenType == TokenType.OpenBrackets)
+                {
+                    bracketNestingLevel++;
+                }
+                else if (apexToken.TokenType == TokenType.CloseBrackets)
+                {
+                    bracketNestingLevel--;
+                }
+
+                lastTokenType = apexToken.TokenType;
             }
 
-            List<string> newApexCodeList = new List<string>();
-            foreach (var apecCodeLine in apexCodeList)
+            // Make sure that the last line isn't lost if it's not empty
+            if (!string.IsNullOrWhiteSpace(apexLine))
             {
-                if (apecCodeLine.Length != 0)
+                apexCodeList.Add(apexLine.Trim());
+            }
+
+            // Ignore empty lines and collapse empty getters/setters
+            var newApexCodeList = new List<string>();
+            for (var index = 0; index < apexCodeList.Count; index++)
+            {
+                var apexCodeLine = apexCodeList[index];
+                if (apexCodeLine == "{" &&
+                    index < apexCodeList.Count - 2 &&
+                    apexCodeList[index + 2] == "}" &&
+                    IsEmptyGetterOrSetter(apexCodeList[index + 1]))
                 {
-                    newApexCodeList.Add(apecCodeLine);
+                    apexCodeLine = $"{{ {apexCodeList[index + 1]} }}";
+                    index += 2;
+
+                    if (newApexCodeList.Count > 0)
+                    {
+                        newApexCodeList[newApexCodeList.Count - 1] += " " + apexCodeLine;
+                        continue;
+                    }
+                }
+
+                if (apexCodeLine.Length != 0)
+                {
+                    newApexCodeList.Add(apexCodeLine);
                 }
             }
 
             return newApexCodeList;
         }
 
+        private static bool IsEmptyGetterOrSetter(string line)
+        {
+            line = line.Trim();
+
+            return line == "get;" || line == "set;" ||
+                line == "get; set;" || line == "set; get;";
+        }
+
         public static string IndentApexCode(List<string> apexCodeList)
         {
             var sb = new StringBuilder();
             var needExtraLine = false;
-            int padding = 0;
+            var padding = 0;
 
             foreach (var apexCode in apexCodeList)
             {
