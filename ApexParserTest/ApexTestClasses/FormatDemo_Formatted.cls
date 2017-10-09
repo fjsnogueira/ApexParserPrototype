@@ -5,6 +5,7 @@
 public with sharing class FormatDemo
 {
      public Integer dateOfBirth { get; set; }
+
      public void ForLoopTest()
      {
           for (Integer i = 0; i < 10; i++)

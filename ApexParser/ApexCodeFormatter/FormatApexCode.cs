@@ -190,6 +190,10 @@ namespace ApexParser.ApexCodeFormatter
                     padding = padding - IndentSize;
                     needExtraLine = true;
                 }
+                else if (apexCode.Trim().EndsWith("}"))
+                {
+                    needExtraLine = true;
+                }
                 else if (needExtraLine)
                 {
                     sb.AppendLine();
