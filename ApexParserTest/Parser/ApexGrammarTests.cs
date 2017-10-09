@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ApexParser.MetaClass;
 using ApexParser.Parser;
 using NUnit.Framework;
 using Sprache;
@@ -432,15 +433,15 @@ namespace ApexParserTest.Parser
         [Test]
         public void ClassDeclarationBodyCanBeEmpty()
         {
-            var cd = Apex.ClassDeclarationBody.Parse(" Test {}");
+            var cd = Apex.ClassDeclarationBody.Parse(" class Test {}");
             Assert.False(cd.Attributes.Any());
             Assert.False(cd.Methods.Any());
             Assert.False(cd.Modifiers.Any());
             Assert.AreEqual("Test", cd.Identifier);
 
             // incomplete class declarations
-            Assert.Throws<ParseException>(() => Apex.ClassDeclarationBody.Parse(" Test {"));
-            Assert.Throws<ParseException>(() => Apex.ClassDeclarationBody.Parse(" {}"));
+            Assert.Throws<ParseException>(() => Apex.ClassDeclarationBody.Parse(" class Test {"));
+            Assert.Throws<ParseException>(() => Apex.ClassDeclarationBody.Parse(" class {}"));
         }
 
         [Test]
@@ -475,7 +476,7 @@ namespace ApexParserTest.Parser
         [Test]
         public void ClassDeclarationBodyCanDeclareMethods()
         {
-            var cd = Apex.ClassDeclarationBody.Parse(" Program { void main() {} }");
+            var cd = Apex.ClassDeclarationBody.Parse(" class Program { void main() {} }");
             Assert.True(cd.Methods.Any());
             Assert.AreEqual("Program", cd.Identifier);
 
@@ -485,8 +486,8 @@ namespace ApexParserTest.Parser
             Assert.False(md.MethodParameters.Any());
 
             // class declarations with bad methods
-            Assert.Throws<ParseException>(() => Apex.ClassDeclarationBody.Parse(" Test { void Main }"));
-            Assert.Throws<ParseException>(() => Apex.ClassDeclarationBody.Parse(" Apex { int main() }"));
+            Assert.Throws<ParseException>(() => Apex.ClassDeclarationBody.Parse(" class Test { void Main }"));
+            Assert.Throws<ParseException>(() => Apex.ClassDeclarationBody.Parse(" class Apex { int main() }"));
         }
 
         [Test]
@@ -521,6 +522,43 @@ namespace ApexParserTest.Parser
             // class declarations with bad methods
             Assert.Throws<ParseException>(() => Apex.ClassDeclaration.Parse(" class with Test { }"));
             Assert.Throws<ParseException>(() => Apex.ClassDeclaration.Parse("class sharing Test { }"));
+        }
+
+        [Test]
+        public void ClassMemberDeclarationCanBeMethodPropertyOrClass()
+        {
+            var cm = Apex.ClassMemberDeclaration.Parse("@testFixture public with   sharing class Program { }");
+            var cd = cm as ClassSyntax;
+            Assert.NotNull(cd);
+            Assert.False(cd.Methods.Any());
+            Assert.AreEqual("Program", cd.Identifier);
+
+            Assert.AreEqual(1, cd.Attributes.Count);
+            Assert.AreEqual("testFixture", cd.Attributes[0]);
+            Assert.AreEqual(2, cd.Modifiers.Count);
+            Assert.AreEqual("public", cd.Modifiers[0]);
+            Assert.AreEqual("with_sharing", cd.Modifiers[1]);
+
+            cm = Apex.ClassMemberDeclaration.Parse("private Disposable() { return null; }");
+            var md = cm as MethodSyntax;
+            Assert.NotNull(md);
+
+            Assert.AreEqual("Disposable", md.Identifier);
+            Assert.AreEqual("Disposable", md.ReturnType.Identifier);
+            Assert.AreEqual(1, md.Modifiers.Count);
+            Assert.AreEqual("private", md.Modifiers[0]);
+            Assert.AreEqual("return null;", md.CodeInsideMethod);
+
+            cm = Apex.ClassMemberDeclaration.Parse("@required Boolean flag { set { throw; } get; }");
+            var pd = cm as PropertySyntax;
+            Assert.NotNull(pd);
+
+            Assert.AreEqual("flag", pd.Identifier);
+            Assert.AreEqual("Boolean", pd.Type.Identifier);
+            Assert.AreEqual(";", pd.GetterCode);
+            Assert.AreEqual("throw;", pd.SetterCode);
+            Assert.AreEqual(1, pd.Attributes.Count);
+            Assert.AreEqual("required", pd.Attributes[0]);
         }
     }
 }

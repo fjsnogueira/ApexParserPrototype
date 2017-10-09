@@ -193,5 +193,60 @@ namespace ApexParserTest.Parser
                     System.debug('Del Worked');
                 }", md.CodeInsideMethod);
         }
+
+        [Test]
+        public void CustomerDtoIsParsed()
+        {
+            ParseAndValidate(CustomerDto);
+            ParseAndValidate(CustomerDto_Formatted);
+
+            void ParseAndValidate(string text)
+            {
+                var cd = Apex.ClassDeclaration.Parse(text);
+                Assert.False(cd.Attributes.Any());
+                Assert.AreEqual("CustomerDto", cd.Identifier);
+                Assert.AreEqual(1, cd.Modifiers.Count);
+                Assert.AreEqual("public", cd.Modifiers[0]);
+                Assert.AreEqual(3, cd.Properties.Count);
+
+                var pd = cd.Properties[0];
+                Assert.False(pd.Attributes.Any());
+                Assert.AreEqual(1, pd.Modifiers.Count);
+                Assert.AreEqual("public", pd.Modifiers[0]);
+                Assert.AreEqual("String", pd.Type.Identifier);
+                Assert.AreEqual("make", pd.Identifier);
+
+                pd = cd.Properties[1];
+                Assert.False(pd.Attributes.Any());
+                Assert.AreEqual(1, pd.Modifiers.Count);
+                Assert.AreEqual("public", pd.Modifiers[0]);
+                Assert.AreEqual("String", pd.Type.Identifier);
+                Assert.AreEqual("year", pd.Identifier);
+
+                pd = cd.Properties[2];
+                Assert.False(pd.Attributes.Any());
+                Assert.AreEqual(1, pd.Modifiers.Count);
+                Assert.AreEqual("public", pd.Modifiers[0]);
+                Assert.AreEqual("User", pd.Type.Identifier);
+                Assert.AreEqual(1, pd.Type.Namespaces.Count);
+                Assert.AreEqual("CustomerDto", pd.Type.Namespaces[0]);
+                Assert.AreEqual("user", pd.Identifier);
+
+                Assert.AreEqual(1, cd.InnerClasses.Count);
+                cd = cd.InnerClasses[0];
+                Assert.AreEqual("User", cd.Identifier);
+                Assert.False(cd.Attributes.Any());
+                Assert.AreEqual(1, cd.Modifiers.Count);
+                Assert.AreEqual("public", cd.Modifiers[0]);
+                Assert.AreEqual(1, cd.Properties.Count);
+
+                pd = cd.Properties[0];
+                Assert.False(pd.Attributes.Any());
+                Assert.AreEqual(1, pd.Modifiers.Count);
+                Assert.AreEqual("public", pd.Modifiers[0]);
+                Assert.AreEqual("string", pd.Type.Identifier);
+                Assert.AreEqual("userName", pd.Identifier);
+            }
+        }
     }
 }

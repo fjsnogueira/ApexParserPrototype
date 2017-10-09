@@ -105,12 +105,23 @@ namespace ApexParser.Parser
                 .Text().Token().Named("Modifier");
 
         // examples:
-        // void Test() {}
+        // @isTest void Test() {}
         // public static void Hello() {}
         protected internal virtual Parser<MethodSyntax> MethodDeclaration =>
-            from comments in CommentParser.AnyComment.Many()
-            from annotations in Annotation.Many()
-            from modifiers in Modifier.Many()
+            from heading in ClassMemberHeading
+            from methodBody in MethodDeclarationBody
+            select new MethodSyntax(heading)
+            {
+                Identifier = methodBody.Identifier,
+                ReturnType = methodBody.ReturnType,
+                MethodParameters = methodBody.MethodParameters,
+                CodeInsideMethod = methodBody.CodeInsideMethod
+            };
+
+        // examples:
+        // @isTest void Test() {}
+        // public static void Hello() {}
+        protected internal virtual Parser<MethodSyntax> MethodDeclarationBody =>
             from returnType in TypeReference
             from methodName in Identifier.Optional()
             from parameters in MethodParameters
@@ -118,9 +129,6 @@ namespace ApexParser.Parser
             select new MethodSyntax
             {
                 Identifier = methodName.GetOrElse(returnType.Identifier),
-                CodeComments = comments.ToList(),
-                Attributes = annotations.ToList(),
-                Modifiers = modifiers.ToList(),
                 ReturnType = returnType,
                 MethodParameters = parameters,
                 CodeInsideMethod = StripOuterBlockBraces(methodBody)
@@ -138,17 +146,20 @@ namespace ApexParser.Parser
             return result;
         }
 
-        // examples: get; set; get { ... }
-        protected internal virtual Parser<Tuple<string, string>> GetterOrSetter =>
-            from getOrSet in Parse.String("get").Or(Parse.String("set")).Token().Text()
-            from block in Parse.String(";").Token().Text().Or(Block)
-            select Tuple.Create(getOrSet, StripOuterBlockBraces(block));
-
-        // example: public String name { get; set; }
+        // example: @required public String name { get; set; }
         protected internal virtual Parser<PropertySyntax> PropertyDeclaration =>
-            from comments in CommentParser.AnyComment.Many()
-            from annotations in Annotation.Many()
-            from modifiers in Modifier.Many()
+            from heading in ClassMemberHeading
+            from propertyBody in PropertyDeclarationBody
+            select new PropertySyntax(heading)
+            {
+                Type = propertyBody.Type,
+                Identifier = propertyBody.Identifier,
+                GetterCode = propertyBody.GetterCode,
+                SetterCode = propertyBody.SetterCode
+            };
+
+        // example: String name { get; set; }
+        protected internal virtual Parser<PropertySyntax> PropertyDeclarationBody =>
             from propertyType in TypeReference
             from propertyName in Identifier
             from openBrace in Parse.Char('{').Token()
@@ -159,6 +170,12 @@ namespace ApexParser.Parser
                 Type = propertyType,
                 Identifier = propertyName
             };
+
+        // examples: get; set; get { ... }
+        protected internal virtual Parser<Tuple<string, string>> GetterOrSetter =>
+            from getOrSet in Parse.String("get").Or(Parse.String("set")).Token().Text()
+            from block in Parse.String(";").Token().Text().Or(Block)
+            select Tuple.Create(getOrSet, StripOuterBlockBraces(block));
 
         // dummy parser for the block with curly brace matching support
         protected internal virtual Parser<string> Block =>
@@ -182,26 +199,35 @@ namespace ApexParser.Parser
         // example: @TestFixture public static class Program { static void main() {} }
         protected internal virtual Parser<ClassSyntax> ClassDeclaration =>
             from heading in ClassMemberHeading
-            from @class in Parse.String(ApexKeywords.Class).Token()
             from classBody in ClassDeclarationBody
             select new ClassSyntax(heading)
             {
                 Identifier = classBody.Identifier,
-                Methods = classBody.Methods
+                Methods = classBody.Methods,
+                Properties = classBody.Properties,
+                InnerClasses = classBody.InnerClasses
             };
 
-        // example: Program { void main() {} }
+        // example: class Program { void main() {} }
         protected internal virtual Parser<ClassSyntax> ClassDeclarationBody =>
+            from @class in Parse.String(ApexKeywords.Class).Token()
             from className in Identifier
             from openBrace in Parse.Char('{').Token()
-            from methods in MethodDeclaration.Many()
+            from members in ClassMemberDeclaration.Many()
             from closeBrace in Parse.Char('}').Token()
             select new ClassSyntax()
             {
                 Identifier = className,
-                Methods = methods.ToList()
+                Methods = members.OfType<MethodSyntax>().ToList(),
+                Properties = members.OfType<PropertySyntax>().ToList(),
+                InnerClasses = members.OfType<ClassSyntax>().ToList()
             };
 
-        ////protected internal virtual Parser<BaseSyntax> ClassMemberDeclaration =>
+        // class members: methods, classes, properties
+        protected internal virtual Parser<ClassMemberSyntax> ClassMemberDeclaration =>
+            from heading in ClassMemberHeading
+            from member in ClassDeclarationBody.Select(c => c as ClassMemberSyntax)
+                .Or(MethodDeclarationBody).Or(PropertyDeclarationBody)
+            select member.CopyProperties(heading);
     }
 }

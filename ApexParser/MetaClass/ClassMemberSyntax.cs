@@ -10,12 +10,19 @@ namespace ApexParser.MetaClass
     {
         public ClassMemberSyntax(ClassMemberSyntax other = null)
         {
+            CopyProperties(other);
+        }
+
+        public ClassMemberSyntax CopyProperties(ClassMemberSyntax other = null)
+        {
             if (other != null)
             {
                 CodeComments = other.CodeComments;
                 Attributes = other.Attributes;
                 Modifiers = other.Modifiers;
             }
+
+            return this;
         }
 
         public List<string> Attributes { get; set; } = new List<string>();

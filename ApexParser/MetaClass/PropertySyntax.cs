@@ -8,11 +8,15 @@ namespace ApexParser.MetaClass
 {
     public class PropertySyntax : ClassMemberSyntax
     {
-        public PropertySyntax(IEnumerable<Tuple<string, string>> gettersOrSetters, ClassMemberSyntax heading = null)
+        public PropertySyntax(ClassMemberSyntax heading = null)
             : base(heading)
         {
             Kind = SyntaxType.Property;
+        }
 
+        public PropertySyntax(IEnumerable<Tuple<string, string>> gettersOrSetters, ClassMemberSyntax heading = null)
+            : this(heading)
+        {
             foreach (var item in gettersOrSetters)
             {
                 switch (item.Item1)
